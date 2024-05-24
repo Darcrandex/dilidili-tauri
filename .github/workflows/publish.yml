@@ -1,9 +1,11 @@
 name: 'publish'
 
-on:
-  push:
-    branches:
-      - release
+# on:
+#   push:
+#     branches:
+#       - release
+
+on: workflow_dispatch
 
 # This workflow will trigger on each push to the `release` branch to create or update a GitHub release, build your app, and upload the artifacts to the release.
 
@@ -36,7 +38,7 @@ jobs:
       - uses: pnpm/action-setup@v4
         name: Install pnpm
         with:
-          version: 8
+          version: 9
           run_install: false
 
       - name: install Rust stable
