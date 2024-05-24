@@ -7,6 +7,7 @@
 import type { BVItemFromFile } from '@/types/global'
 import UImage from '@/ui/UImage'
 import { cls } from '@/utils/cls'
+import { formatSeconds } from '@/utils/common'
 import { DeleteOutlined, FolderOpenOutlined, LinkOutlined, MoreOutlined } from '@ant-design/icons'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { removeDir } from '@tauri-apps/api/fs'
@@ -77,16 +78,24 @@ export default function BVListItem(props: BVListItemProps) {
     navigate('/home/space')
   }
 
+  const pageCount = children?.filter((v) => v.name?.endsWith('.mp4')).length || 0
+
   return (
     <>
-      <article className={cls('group relative', props.className)}>
-        <UImage
-          className='h-36 mb-2 rounded-md cursor-pointer hover:opacity-75 hover:drop-shadow-xl transition-all'
-          src={coverImageURL}
-          onClick={openVideo}
-        />
+      <article className={cls(props.className)}>
+        <div className='relative'>
+          <UImage
+            className='h-36 mb-2 rounded-md cursor-pointer hover:opacity-75 hover:drop-shadow-xl transition-all'
+            src={coverImageURL}
+            onClick={openVideo}
+          />
 
-        {!!children?.length && <b className='absolute top-1 right-1 !m-0 text-xs text-white'>{children?.length}P</b>}
+          {pageCount > 1 && <b className='absolute top-1 right-1 !m-0 text-xs text-white'>{pageCount}P</b>}
+
+          <span className='absolute bottom-1 right-1 !m-0 px-1 bg-black/20 rounded text-xs text-white'>
+            {formatSeconds(videoInfo.duration)}
+          </span>
+        </div>
 
         <div className='h-12 leading-6 text-sm overflow-clip'>{videoInfo.title}</div>
 
