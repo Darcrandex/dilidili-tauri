@@ -40,13 +40,13 @@ export default function SpacePage() {
 
   // 模拟分页
   const [page, setPage] = useState(1)
-  const [searchText, setSearchText] = useState('')
   const [keyword, setKeyword] = useState('')
+  const [searchText, setSearchText] = useState('')
 
   // reset
   useEffect(() => {
     setPage(1)
-    setSearchText('')
+    setKeyword('')
   }, [id])
 
   const { data: pageRes, isPending } = useQuery({

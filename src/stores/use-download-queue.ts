@@ -2,6 +2,7 @@ import { downloadBV } from '@/core'
 import { useSettings } from '@/stores/use-settings'
 import { DownloadBVParams } from '@/types/global'
 import { uuid } from '@/utils/common'
+import { useQueryClient } from '@tanstack/react-query'
 import { videoDir } from '@tauri-apps/api/path'
 import { atom, useAtom } from 'jotai'
 import { useCallback } from 'react'
@@ -18,6 +19,7 @@ const stateAtom = atom<DownloadQueueItem[]>([])
 export function useDownloadQueue() {
   const [settings] = useSettings()
   const [items, setItems] = useAtom(stateAtom)
+  const queryClient = useQueryClient()
 
   // 添加下载队列项并自动执行
   const addAutoRun = useCallback(
@@ -37,9 +39,10 @@ export function useDownloadQueue() {
         })
         .finally(() => {
           setItems((prev) => prev.filter((v) => v.id !== id))
+          queryClient.invalidateQueries({ queryKey: ['bv', 'all'] })
         })
     },
-    [setItems, settings.rootDirPath]
+    [queryClient, setItems, settings.rootDirPath]
   )
 
   return { items, addAutoRun }
