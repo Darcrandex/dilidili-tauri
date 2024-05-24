@@ -1,8 +1,8 @@
-/* eslint-disable no-undef */
 // 根据不同的平台，复制对应的 ffmpeg 文件到 tauri 中
 
 import { execa } from 'execa'
 import { existsSync, promises } from 'node:fs'
+import { platform as getPlatform } from 'node:os'
 import { resolve } from 'node:path'
 
 // 准备好不同平台下的 ffmpeg
@@ -18,14 +18,15 @@ async function main() {
   // 而是项目的根目录
   // 即 package.json 所在的目录
   const rootPath = resolve('./')
-  const extension = process.platform === 'win32' ? '.exe' : ''
+  const platform = getPlatform()
+  const extension = platform === 'win32' ? '.exe' : ''
 
-  console.log(`Platform: ${process.platform}`)
+  console.log(`Platform: ${platform}`)
 
-  const originFilePath = resolve(rootPath, originFilePathMapping[process.platform])
+  const originFilePath = resolve(rootPath, originFilePathMapping[platform])
 
   if (!originFilePath) {
-    throw new Error(`Unsupported platform: ${process.platform}`)
+    throw new Error(`Unsupported platform: ${platform}`)
   }
 
   const rustInfo = (await execa('rustc', ['-vV'])).stdout
