@@ -1,9 +1,9 @@
 /* eslint-disable no-undef */
 // 根据不同的平台，复制对应的 ffmpeg 文件到 tauri 中
 
-import execa from 'execa'
-import { existsSync, promises } from 'fs'
-import { resolve } from 'path'
+import { execa } from 'execa'
+import { existsSync, promises } from 'node:fs'
+import { resolve } from 'node:path'
 
 // 准备好不同平台下的 ffmpeg
 const originFilePathMapping = {
@@ -13,8 +13,14 @@ const originFilePathMapping = {
 }
 
 async function main() {
-  const rootPath = resolve('../')
+  // 注意
+  // 这里的 ./ 不是当前文件的目录
+  // 而是项目的根目录
+  // 即 package.json 所在的目录
+  const rootPath = resolve('./')
   const extension = process.platform === 'win32' ? '.exe' : ''
+
+  console.log(`Platform: ${process.platform}`)
 
   const originFilePath = resolve(rootPath, originFilePathMapping[process.platform])
 

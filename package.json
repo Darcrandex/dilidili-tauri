@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "prebuild": "node scripts/copy-ffmpeg.cjs",
+    "prebuild": "node scripts/copy-ffmpeg.mjs",
     "tauri": "tauri",
     "format": "prettier --write ./src/**/*.{ts,tsx}",
     "lint": "eslint ./src/**/*.{ts,tsx}"
