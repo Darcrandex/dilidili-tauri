@@ -1,10 +1,9 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable no-undef */
 // 根据不同的平台，复制对应的 ffmpeg 文件到 tauri 中
 
-const execa = require('execa')
-const fs = require('fs')
-const path = require('path')
+import execa from 'execa'
+import { existsSync, promises } from 'fs'
+import { resolve } from 'path'
 
 // 准备好不同平台下的 ffmpeg
 const originFilePathMapping = {
@@ -14,10 +13,10 @@ const originFilePathMapping = {
 }
 
 async function main() {
-  const rootPath = path.resolve(__dirname, '../')
+  const rootPath = resolve('../')
   const extension = process.platform === 'win32' ? '.exe' : ''
 
-  const originFilePath = path.resolve(rootPath, originFilePathMapping[process.platform])
+  const originFilePath = resolve(rootPath, originFilePathMapping[process.platform])
 
   if (!originFilePath) {
     throw new Error(`Unsupported platform: ${process.platform}`)
@@ -29,16 +28,16 @@ async function main() {
     throw new Error('Failed to determine platform target triple')
   }
 
-  const targetFilePath = path.resolve(rootPath, `src-tauri/binaries/ffmpeg-${targetTriple}${extension}`)
+  const targetFilePath = resolve(rootPath, `src-tauri/binaries/ffmpeg-${targetTriple}${extension}`)
 
-  if (fs.existsSync(targetFilePath)) {
+  if (existsSync(targetFilePath)) {
     console.log(`File already exists: ${targetFilePath}`)
     return
   }
 
   // 复制对应的文件到 bin 目录
   // 其他没有使用到的 ffmpeg 文件不会被打包到程序中
-  await fs.promises.copyFile(originFilePath, targetFilePath)
+  await promises.copyFile(originFilePath, targetFilePath)
 
   console.log(`File copied: ${targetFilePath}`)
 }
