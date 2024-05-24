@@ -14,3 +14,16 @@ export function taskOneByOne(tasks: (() => Promise<any>)[]) {
 export function uuid(len = 8) {
   return customAlphabet('1234567890abcdefghijklmnopqrstuvwxyz', len)()
 }
+
+// 将秒转换为时分秒格式
+export function formatSeconds(seconds: number): string {
+  const hours = Math.floor(seconds / 3600)
+  const minutes = Math.floor((seconds % 3600) / 60)
+  const remainingSeconds = seconds % 60
+
+  const formattedHours = hours > 0 ? hours.toString().padStart(2, '0') : null
+  const formattedMinutes = minutes.toString().padStart(2, '0')
+  const formattedSeconds = remainingSeconds.toString().padStart(2, '0')
+
+  return [formattedHours, formattedMinutes, formattedSeconds].filter(Boolean).join(':')
+}

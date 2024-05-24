@@ -4,8 +4,9 @@
  * @author darcrand
  */
 
+import { useSession } from '@/stores/use-session'
 import { useSettings } from '@/stores/use-settings'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { open } from '@tauri-apps/api/dialog'
 import { videoDir } from '@tauri-apps/api/path'
 import { open as openShell } from '@tauri-apps/api/shell'
@@ -13,6 +14,8 @@ import { Button, Form, Input } from 'antd'
 import * as R from 'ramda'
 
 export default function Settings() {
+  const queryClient = useQueryClient()
+  const [, setSession] = useSession()
   const [settings, setSettings] = useSettings()
   const { data: videoDirPath } = useQuery({ queryKey: ['videoDir'], queryFn: async () => await videoDir() })
   const rootDirPath = settings.rootDirPath || videoDirPath
@@ -35,6 +38,12 @@ export default function Settings() {
     }
   }
 
+  const clearCache = async () => {
+    setSettings((prev) => ({ ...prev, rootDirPath: '' }))
+    setSession('')
+    queryClient.invalidateQueries()
+  }
+
   return (
     <>
       <div className='max-w-xl mx-auto p-4'>
@@ -52,7 +61,7 @@ export default function Settings() {
 
         <Form layout='vertical'>
           <Form.Item label='缓存操作'>
-            <Button>清空缓存</Button>
+            <Button onClick={clearCache}>清空缓存</Button>
           </Form.Item>
         </Form>
       </div>

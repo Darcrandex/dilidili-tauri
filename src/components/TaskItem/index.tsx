@@ -54,8 +54,7 @@ export default function TaskItem(props: TaskItemProps) {
   })
 
   const status = statusOptions.find((o) => o.value === props.task.status)
-  // const isPending = props.task.status === ETaskStatus.Downloading || props.task.status === ETaskStatus.Merging
-  const isPending = false
+  const isPending = props.task.status === ETaskStatus.Downloading || props.task.status === ETaskStatus.Merging
 
   const qualityLabel = useMemo(() => {
     if (!Array.isArray(playurlData?.support_formats) || !props.task.params.quality) return null

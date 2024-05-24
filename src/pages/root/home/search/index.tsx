@@ -90,25 +90,28 @@ export default function Search() {
 
               <UImage src={videoInfo.pic} fit='contain' className='h-80 lg:h-96 rounded-lg bg-black' />
 
-              <p className='text-center'>
-                <DownloadModal
-                  videoInfo={videoInfo}
-                  defaultPage={p}
-                  onOk={() => navigate('/home/tasks', { replace: true })}
-                  trigger={(onOpen) => (
-                    <Button type='primary' icon={<DownloadOutlined />} onClick={onOpen}>
-                      下载视频
-                    </Button>
-                  )}
-                />
-              </p>
+              {!!session && (
+                <p className='text-center'>
+                  <DownloadModal
+                    videoInfo={videoInfo}
+                    defaultPage={p}
+                    onOk={() => navigate('/home/tasks', { replace: true })}
+                    trigger={(onOpen) => (
+                      <Button type='primary' icon={<DownloadOutlined />} onClick={onOpen}>
+                        下载视频
+                      </Button>
+                    )}
+                  />
+                </p>
+              )}
 
               {!session && (
-                <p className='text-center'>
-                  <Button type='link' onClick={() => navigate('/mine', { replace: true })}>
+                <p className='text-center space-x-2'>
+                  <span>不</span>
+                  <Button type='primary' onClick={() => navigate('/mine', { replace: true })}>
                     登录
                   </Button>
-                  <span>后可以下载 720P 以上的视频哦</span>
+                  <span>下载不了视频 (→_←)</span>
                 </p>
               )}
             </>

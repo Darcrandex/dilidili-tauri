@@ -14,7 +14,7 @@ import { useLiveQuery } from 'dexie-react-hooks'
 import { useState } from 'react'
 
 export default function Tasks() {
-  const taskList = useLiveQuery(() => db.tasks.toArray())
+  const taskList = useLiveQuery(() => db.tasks.orderBy('createdAt').reverse().toArray())
   const [open, setOpen] = useState(false)
 
   const onRemoveAll = async () => {

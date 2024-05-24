@@ -18,10 +18,11 @@ export default function Mine() {
   const [session, setSession] = useSession()
   const queryClient = useQueryClient()
 
-  const { data: profile, isPending } = useQuery({
+  const { data: profile, isLoading } = useQuery({
     queryKey: ['profile', session],
     enabled: !!session,
-    queryFn: () => userService.profile()
+    queryFn: () => userService.profile(),
+    retry: false
   })
 
   const onLogout = () => {
@@ -35,7 +36,7 @@ export default function Mine() {
     <>
       <TopHeader showLogo={false} />
 
-      {isPending && <p className='my-10 text-slate-400 text-center'>loading...</p>}
+      {isLoading && <p className='my-10 text-slate-400 text-center'>loading...</p>}
 
       {isLogin ? (
         <>
@@ -64,7 +65,7 @@ export default function Mine() {
 
       <LoginModal
         renderTrigger={(onOpen) =>
-          !isPending &&
+          !isLoading &&
           !isLogin && (
             <section className='m-10 text-center space-y-4'>
               <p>还没有登录</p>
