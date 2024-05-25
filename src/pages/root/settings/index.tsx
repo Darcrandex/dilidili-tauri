@@ -4,13 +4,14 @@
  * @author darcrand
  */
 
+import { taskService } from '@/services/task'
 import { useSession } from '@/stores/use-session'
 import { useSettings } from '@/stores/use-settings'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { open } from '@tauri-apps/api/dialog'
 import { videoDir } from '@tauri-apps/api/path'
 import { open as openShell } from '@tauri-apps/api/shell'
-import { Button, Form, Input } from 'antd'
+import { Button, Form, Input, message } from 'antd'
 import * as R from 'ramda'
 
 export default function Settings() {
@@ -38,14 +39,18 @@ export default function Settings() {
     }
   }
 
+  const [messageApi, contextHolder] = message.useMessage()
   const clearCache = async () => {
-    setSettings((prev) => ({ ...prev, rootDirPath: '' }))
     setSession('')
+    taskService.clear()
     queryClient.invalidateQueries()
+    messageApi.success('缓存已清空')
   }
 
   return (
     <>
+      {contextHolder}
+
       <div className='max-w-xl mx-auto p-4'>
         <Form layout='vertical'>
           <Form.Item label='视频根目录'>
