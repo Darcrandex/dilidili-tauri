@@ -166,7 +166,7 @@ export default function SpacePage() {
         <ul className='flex flex-wrap -mx-4 my-2'>
           {pageRes?.records?.map((v) => (
             <li key={v.bvid} className='w-full sm:w-1/2 lg:w-1/3 xl:w-1/4 2xl:w-1/6'>
-              <BVListItem data={v} className='m-4' />
+              <BVListItem data={v} className='m-4' showUpName={!id} />
             </li>
           ))}
         </ul>

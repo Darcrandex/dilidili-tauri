@@ -53,7 +53,7 @@ export default function Search() {
     <>
       <div className='max-w-xl mx-auto p-4'>
         <section className='mb-4 space-y-4'>
-          <div className='invisible transition-all' style={{ height: placeholderHeight }}></div>
+          <div className='invisible' style={{ height: placeholderHeight }}></div>
 
           <div className='max-w-sm mx-auto'>
             <img

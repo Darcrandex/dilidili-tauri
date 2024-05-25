@@ -4,13 +4,15 @@
  * @author darcrand
  */
 
+import { hasSameKeys, pickVideoInfo } from '@/components/DownloadModal/utils'
+import { mediaService } from '@/services/media'
 import type { BVItemFromFile } from '@/types/global'
 import UImage from '@/ui/UImage'
 import { cls } from '@/utils/cls'
 import { formatSeconds } from '@/utils/common'
-import { DeleteOutlined, FolderOpenOutlined, LinkOutlined, MoreOutlined } from '@ant-design/icons'
+import { DatabaseOutlined, DeleteOutlined, FolderOpenOutlined, LinkOutlined, MoreOutlined } from '@ant-design/icons'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { removeDir } from '@tauri-apps/api/fs'
+import { removeDir, writeTextFile } from '@tauri-apps/api/fs'
 import { open as openShell } from '@tauri-apps/api/shell'
 import { convertFileSrc } from '@tauri-apps/api/tauri'
 import { Button, Dropdown, Modal } from 'antd'
@@ -80,6 +82,21 @@ export default function BVListItem(props: BVListItemProps) {
 
   const pageCount = children?.filter((v) => v.name?.endsWith('.mp4')).length || 0
 
+  // 优化功能
+  // 对应 videoInfo 进行压缩
+  const infoCompressed = hasSameKeys(videoInfo)
+  const compressInfo = async () => {
+    // 重新获取最新的视频信息
+    const latestInfo = await mediaService.info(bvid || '')
+
+    const compressed = pickVideoInfo(latestInfo)
+    const jsonFilePath = children?.find((v) => v.name?.endsWith('.json'))?.path
+    if (jsonFilePath) {
+      await writeTextFile(jsonFilePath, JSON.stringify(compressed))
+      queryClient.invalidateQueries({ queryKey: ['bv', 'all'] })
+    }
+  }
+
   return (
     <>
       <article className={cls(props.className)}>
@@ -123,11 +140,22 @@ export default function BVListItem(props: BVListItemProps) {
                   label: '从B站打开',
                   onClick: openInBrowser
                 },
-                { key: 'remove', icon: <DeleteOutlined />, label: '删除文件夹', onClick: () => setOpenRemove(true) }
+                { key: 'remove', icon: <DeleteOutlined />, label: '删除文件夹', onClick: () => setOpenRemove(true) },
+                {
+                  key: 'compress',
+                  icon: <DatabaseOutlined />,
+                  disabled: infoCompressed,
+                  label: '压缩视频信息',
+                  onClick: compressInfo
+                }
               ]
             }}
           >
-            <Button shape='circle' type='text' icon={<MoreOutlined />} />
+            <Button
+              shape='circle'
+              type='text'
+              icon={<MoreOutlined className={cls(!infoCompressed && 'text-red-500')} />}
+            />
           </Dropdown>
         </div>
       </article>
