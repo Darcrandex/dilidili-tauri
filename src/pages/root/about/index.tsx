@@ -6,17 +6,11 @@
 
 import { useQuery } from '@tanstack/react-query'
 import { getTauriVersion, getVersion } from '@tauri-apps/api/app'
-import { checkUpdate } from '@tauri-apps/api/updater'
 import { Descriptions, type DescriptionsProps } from 'antd'
 
 export default function About() {
   const { data: version } = useQuery({ queryKey: ['app-version'], queryFn: getVersion })
   const { data: tauriVersion } = useQuery({ queryKey: ['tauri-version'], queryFn: getTauriVersion })
-
-  const onCheck = async () => {
-    const res = await checkUpdate()
-    console.log(res)
-  }
 
   const items: DescriptionsProps['items'] = [
     {
