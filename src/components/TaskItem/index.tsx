@@ -99,12 +99,12 @@ export default function TaskItem(props: TaskItemProps) {
   return (
     <>
       <div className='group flex space-x-4 rounded-md transition-all hover:bg-slate-50'>
-        <UImage src={props.task.params.videoInfo.pic} className='block w-40 h-24 rounded-md object-cover' />
+        <UImage src={props.task.params.videoInfo.pic} className='block w-40 h-auto rounded-md object-cover' />
 
         <article className='flex-1 flex flex-col py-2'>
           <p className='leading-6 h-12 overflow-hidden'>{props.task.params.videoInfo.title}</p>
 
-          <p className='flex flex-wrap text-sm'>
+          <p className='flex flex-wrap mt-4 text-sm'>
             <Tag bordered={false}>{props.task.params.videoInfo.owner.name}</Tag>
 
             <Tag bordered={false}>P{props.task.params.page}</Tag>
