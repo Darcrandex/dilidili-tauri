@@ -4,6 +4,7 @@ import { execa } from 'execa'
 import { existsSync, promises } from 'node:fs'
 import { platform as getPlatform } from 'node:os'
 import { resolve } from 'node:path'
+import { argv } from 'node:process'
 
 // 准备好不同平台下的 ffmpeg
 const originFilePathMapping = {
@@ -18,11 +19,12 @@ async function main() {
   // 而是项目的根目录
   // 即 package.json 所在的目录
   const rootPath = resolve('./')
+
   const platform = getPlatform()
+  // 为了配合 github action 的配置
+  // 获取命令行传入的平台
+  const target = argv.find((str) => str.includes(platform))
   const extension = platform === 'win32' ? '.exe' : ''
-
-  console.log(`Platform: ${platform}`)
-
   const originFilePath = resolve(rootPath, originFilePathMapping[platform])
 
   if (!originFilePath) {
@@ -30,7 +32,7 @@ async function main() {
   }
 
   const rustInfo = (await execa('rustc', ['-vV'])).stdout
-  const targetTriple = /host: (\S+)/g.exec(rustInfo)[1]
+  const targetTriple = target || /host: (\S+)/g.exec(rustInfo)[1]
   if (!targetTriple) {
     throw new Error('Failed to determine platform target triple')
   }
