@@ -42,11 +42,10 @@ export default function BVListItem(props: BVListItemProps) {
   }, [videoInfo])
 
   const { data: coverImageURL } = useQuery({
-    queryKey: ['bv', 'cover', children],
+    queryKey: ['bv', 'cover', bvid],
     queryFn: async () => {
-      const arr = children?.filter((v) => v.name?.endsWith('.jpg'))
-      const first = R.head(arr || [])
-      const assetUrl = first?.path ? convertFileSrc(first?.path) : ''
+      const coverImagePath = children?.find((v) => v.name?.endsWith('.jpg'))?.path
+      const assetUrl = coverImagePath ? convertFileSrc(coverImagePath) : ''
       return assetUrl
     }
   })
@@ -114,7 +113,7 @@ export default function BVListItem(props: BVListItemProps) {
           </span>
         </div>
 
-        <div className='h-12 leading-6 text-sm overflow-clip'>{videoInfo.title}</div>
+        <div className='h-12 leading-6 text-sm overflow-clip line-clamp-2'>{videoInfo.title}</div>
 
         <div className='flex items-center justify-between'>
           <label className='text-xs text-gray-400'>

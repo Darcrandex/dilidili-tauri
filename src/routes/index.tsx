@@ -11,6 +11,7 @@ const SpacePage = withSuspense(lazy(() => import('@/pages/root/home/space/[id]')
 const Tasks = withSuspense(lazy(() => import('@/pages/root/home/tasks')))
 const Mine = withSuspense(lazy(() => import('@/pages/root/mine')))
 const Settings = withSuspense(lazy(() => import('@/pages/root/settings')))
+const About = withSuspense(lazy(() => import('@/pages/root/about')))
 const NotFound = withSuspense(lazy(() => import('@/pages/404')))
 
 export const routes: RouteObject[] = [
@@ -18,12 +19,12 @@ export const routes: RouteObject[] = [
     path: '/',
     element: <Root />,
     children: [
-      { index: true, element: <Navigate to='home' /> },
+      { index: true, element: <Navigate to='home' replace /> },
       {
         path: 'home',
         element: <Home />,
         children: [
-          { index: true, element: <Navigate to='search' /> },
+          { index: true, element: <Navigate to='search' replace /> },
 
           {
             path: 'search',
@@ -55,6 +56,10 @@ export const routes: RouteObject[] = [
       {
         path: 'settings',
         element: <Settings />
+      },
+      {
+        path: 'about',
+        element: <About />
       }
     ]
   },

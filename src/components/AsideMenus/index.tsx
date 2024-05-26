@@ -5,13 +5,14 @@
  */
 
 import { cls } from '@/utils/cls'
-import { HomeOutlined, SettingOutlined, SmileOutlined } from '@ant-design/icons'
+import { HomeOutlined, InfoCircleOutlined, SettingOutlined, SmileOutlined } from '@ant-design/icons'
 import { NavLink } from 'react-router-dom'
 
 const menus = [
   { to: '/home', title: '首页', icon: <HomeOutlined /> },
   { to: '/mine', title: '我的', icon: <SmileOutlined /> },
-  { to: '/settings', title: '设置', icon: <SettingOutlined /> }
+  { to: '/settings', title: '设置', icon: <SettingOutlined /> },
+  { to: '/about', title: '关于', icon: <InfoCircleOutlined /> }
 ]
 
 export default function AsideMenus() {
