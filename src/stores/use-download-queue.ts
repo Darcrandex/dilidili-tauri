@@ -39,7 +39,8 @@ export function useDownloadQueue() {
         })
         .finally(() => {
           setItems((prev) => prev.filter((v) => v.id !== id))
-          queryClient.invalidateQueries({ queryKey: ['bv', 'all'] })
+          queryClient.invalidateQueries({ queryKey: ['owner-dirs'] })
+          queryClient.invalidateQueries({ queryKey: ['bv'] })
         })
     },
     [queryClient, setItems, settings.rootDirPath]
