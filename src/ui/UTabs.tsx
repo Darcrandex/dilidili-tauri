@@ -22,7 +22,7 @@ export type UTabsProps = {
 export default function UTabs(props: UTabsProps) {
   const winSize = useSize(() => window.document.body)
   const refContainer = useRef<HTMLUListElement>(null)
-  const currIndex = props.items.findIndex((v) => v.key === props.activeKey)
+  const currIndex = props.items.findIndex((v) => !!props.activeKey && v.key.includes(props.activeKey))
   const [style, setStyle] = useState<CSSProperties>()
 
   useEffect(() => {
@@ -48,7 +48,7 @@ export default function UTabs(props: UTabsProps) {
             key={v.key}
             className={cls(
               'mx-4 py-2 transition-all font-bold',
-              v.key === props.activeKey ? 'text-primary' : 'hover:text-primary/80'
+              !!props.activeKey && v.key.includes(props.activeKey) ? 'text-primary' : 'hover:text-primary/80'
             )}
           >
             <button onClick={() => v.onClick?.(v.key)}>{v.title}</button>

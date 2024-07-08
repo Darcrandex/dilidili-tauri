@@ -24,7 +24,7 @@ export default function OwnerListItem(props: OwnerListItemProps) {
         className={({ isActive }) =>
           cls(
             'flex items-center space-x-2 m-2 p-2 rounded-md transition-all',
-            isActive ? 'bg-slate-100' : 'hover:bg-slate-50'
+            isActive ? 'text-primary bg-slate-100' : 'hover:bg-slate-50'
           )
         }
         to={props.mid}

@@ -8,6 +8,7 @@ import BVListItem from '@/components/BVListItem'
 import { useRootDirPath } from '@/hooks/use-root-dir-path'
 import { fsService } from '@/services/fs'
 import { userService } from '@/services/user'
+import { useSetCurrentMid } from '@/stores/use-current-mid'
 import type { BVItemFromFile } from '@/types/global'
 import UEmpty from '@/ui/UEmpty'
 import UImage from '@/ui/UImage'
@@ -23,19 +24,20 @@ import { useNavigate, useParams } from 'react-router-dom'
 const PAGE_SIZE = 24
 
 export default function SpacePage() {
-  const id = useParams().id || ''
+  const setCurrentMid = useSetCurrentMid()
   const rootDirPath = useRootDirPath()
-
-  const { data: ownerInfo } = useQuery({
-    enabled: !!id,
-    queryKey: ['up', 'info', id],
-    queryFn: () => userService.getById(id)
-  })
+  const id = useParams().id || ''
 
   const { data: allBVList } = useQuery({
     enabled: !!rootDirPath,
     queryKey: ['bv', 'all', rootDirPath],
     queryFn: () => fsService.getBVList(rootDirPath || '')
+  })
+
+  const { data: ownerInfo } = useQuery({
+    enabled: !!id,
+    queryKey: ['up', 'info', id],
+    queryFn: () => userService.getById(id)
   })
 
   // 模拟分页
@@ -46,10 +48,12 @@ export default function SpacePage() {
   // reset
   useEffect(() => {
     setPage(1)
+    setSearchText('')
     setKeyword('')
-  }, [id])
+    setCurrentMid(id)
+  }, [id, setCurrentMid])
 
-  const { data: pageRes, isPending } = useQuery({
+  const { data: pageRes, isLoading } = useQuery({
     queryKey: ['bv', 'pages', allBVList, id, page, keyword],
     queryFn: async () => {
       let arr: BVItemFromFile[] = R.clone(allBVList || [])
@@ -62,13 +66,11 @@ export default function SpacePage() {
         arr = arr.filter((v) => v.videoInfo.title.includes(keyword))
       }
 
-      arr = arr.sort((a, b) =>
-        a.videoInfo?.pubdate && b.videoInfo?.pubdate ? b.videoInfo?.pubdate - a.videoInfo?.pubdate : 0
-      )
+      arr.sort((a, b) => (b.videoInfo?.pubdate || 0) - (a.videoInfo?.pubdate || 0))
 
       const total = arr.length
       const limit = PAGE_SIZE
-      const offset = page * limit - limit
+      const offset = (page - 1) * limit
 
       return { records: arr.slice(offset, offset + limit), total }
     }
@@ -171,7 +173,7 @@ export default function SpacePage() {
           ))}
         </ul>
 
-        {isPending && <p className='my-10 text-center text-slate-500'>加载中...</p>}
+        {isLoading && <p className='my-10 text-center text-slate-500'>加载中...</p>}
         {pageRes?.records?.length === 0 && <UEmpty>啥也没有...</UEmpty>}
 
         <footer className='my-4'>

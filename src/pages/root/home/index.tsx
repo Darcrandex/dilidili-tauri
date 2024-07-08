@@ -5,19 +5,23 @@
  */
 
 import TopHeader from '@/components/TopHeader'
+import { useCurrentMid } from '@/stores/use-current-mid'
 import UTabs from '@/ui/UTabs'
-import { Suspense } from 'react'
+import { Suspense, useMemo } from 'react'
 import { Outlet, useMatch, useNavigate } from 'react-router-dom'
 
-const navs = [
-  { to: 'search', title: '搜索视频' },
-  { to: 'tasks', title: '下载任务' },
-  { to: 'space', title: '本地视频' }
-]
-
 export default function Home() {
+  const [mid] = useCurrentMid()
   const navigate = useNavigate()
   const tabKey = useMatch('/home/:tabKey/*')?.params.tabKey
+
+  const navs = useMemo(() => {
+    return [
+      { to: 'search', title: '搜索视频' },
+      { to: 'tasks', title: '下载任务' },
+      { to: mid ? `space/${mid}` : 'space', title: '本地视频' }
+    ]
+  }, [mid])
 
   return (
     <>

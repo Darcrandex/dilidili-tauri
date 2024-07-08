@@ -31,7 +31,7 @@ export default function Space() {
           <NavLink
             className={cls(
               'flex items-center space-x-2 m-2 p-2 rounded-md transition-all',
-              isAll ? 'bg-slate-100' : 'hover:bg-slate-50'
+              isAll ? 'text-primary bg-slate-100' : 'hover:bg-slate-50'
             )}
             to=''
           >
