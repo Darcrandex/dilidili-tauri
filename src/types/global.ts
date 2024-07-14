@@ -161,6 +161,12 @@ export interface UPCardInfo {
   like_num: number
 }
 
+// 业务定义的用户基本信息
+export interface UserBaseInfoShema {
+  mid: string
+  path: string
+}
+
 export interface UserProfileShchema {
   isLogin: boolean
   email_verified: number

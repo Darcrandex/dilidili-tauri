@@ -1,4 +1,4 @@
-import type { BVItemFromFile, VideoInfoSchema } from '@/types/global'
+import type { BVItemFromFile, UserBaseInfoShema, VideoInfoSchema } from '@/types/global'
 import { exists, readDir, readTextFile } from '@tauri-apps/api/fs'
 import { join } from '@tauri-apps/api/path'
 import * as R from 'ramda'
@@ -71,5 +71,50 @@ export const fsService = {
     }
 
     return bvList
+  },
+
+  // V2
+  // 整合处理所有的视频，和 UP 主信息
+  // 用于全局只处理一次请求
+  async getAllBVData(rootDirPath: string): Promise<{ ups: Array<UserBaseInfoShema>; bvs: Array<BVItemFromFile> }> {
+    if (!rootDirPath) return { ups: [], bvs: [] }
+
+    const midRegex = /^\d{5,}$/
+    const bvRegex = /^BV[0-9a-zA-Z]{5,}$/
+    const tree = await readDir(rootDirPath, { recursive: true })
+
+    // UP ID 列表
+    const upBaseInfoList: Array<UserBaseInfoShema> = []
+    // 所有的 BV 列表
+    const bvList: BVItemFromFile[] = []
+
+    for (const v of tree) {
+      if (R.isNotNil(v.name) && midRegex.test(v.name)) {
+        const mid = v.name
+        upBaseInfoList.push({ mid, path: v.path })
+
+        if (R.is(Array, v.children)) {
+          for (const c of v.children) {
+            if (R.isNotNil(c.name) && bvRegex.test(c.name)) {
+              const bvid = c.name
+              const infoPath = await join(c.path, `${bvid}-info.json`)
+              const coverPath = await join(c.path, `${bvid}-cover.jpg`)
+
+              // 过滤没有视频或没有封面的 bv
+              if (!(await exists(infoPath)) || !(await exists(coverPath))) continue
+
+              try {
+                const videoInfo: VideoInfoSchema = JSON.parse(await readTextFile(infoPath))
+                bvList.push({ mid, bvid, videoInfo, path: c.path, children: c.children })
+              } catch (error) {
+                console.log('bv 文件夹中没有视频信息', error)
+              }
+            }
+          }
+        }
+      }
+    }
+
+    return { ups: upBaseInfoList, bvs: bvList }
   }
 }

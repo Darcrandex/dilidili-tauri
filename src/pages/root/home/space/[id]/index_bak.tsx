@@ -6,20 +6,17 @@
 
 import BVListItem from '@/components/BVListItem'
 import { useRootDirPath } from '@/hooks/use-root-dir-path'
-import { useAllBVData } from '@/queries/useAllBVData'
 import { fsService } from '@/services/fs'
 import { userService } from '@/services/user'
-import { useSetCachedUrl } from '@/stores/use-cached-url'
+import { useSetCurrentMid } from '@/stores/use-current-mid'
 import type { BVItemFromFile } from '@/types/global'
 import UEmpty from '@/ui/UEmpty'
 import UImage from '@/ui/UImage'
-import useUrlState from '@ahooksjs/use-url-state'
 import { DeleteOutlined, FolderOpenOutlined, MoreOutlined } from '@ant-design/icons'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { removeDir } from '@tauri-apps/api/fs'
 import { open as openShell } from '@tauri-apps/api/shell'
 import { Button, Dropdown, Input, Modal, Pagination } from 'antd'
-import QueryString from 'qs'
 import * as R from 'ramda'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -27,49 +24,56 @@ import { useNavigate, useParams } from 'react-router-dom'
 const PAGE_SIZE = 24
 
 export default function SpacePage() {
+  const setCurrentMid = useSetCurrentMid()
   const rootDirPath = useRootDirPath()
-  const { data: allData } = useAllBVData(rootDirPath)
-
   const id = useParams().id || ''
-  const [query, setQuery] = useUrlState({ page: '1', keyword: '' })
-  const [searchText, setSearchText] = useState(query.keyword || '')
-  const setCachedUrl = useSetCachedUrl()
 
-  useEffect(() => setSearchText(query.keyword), [query.keyword])
-  useEffect(() => {
-    setCachedUrl(`space/${id}?${QueryString.stringify(query)}`)
-  }, [id, query, setCachedUrl])
-
-  const { data: pageRes, isLoading } = useQuery({
-    queryKey: ['bv', 'pages', id, query, allData?.bvs],
-    queryFn: async () => {
-      let arr: BVItemFromFile[] = R.clone(allData?.bvs || [])
-
-      // 是否指定 UP
-      if (id) {
-        arr = arr.filter((v) => v.mid === id)
-      }
-
-      // 是否指定关键字
-      if (query.keyword) {
-        arr = arr.filter((v) => v.videoInfo.title.toLowerCase().includes(query.keyword.trim().toLowerCase()))
-      }
-
-      // 排序
-      arr.sort((a, b) => (b.videoInfo?.pubdate || 0) - (a.videoInfo?.pubdate || 0))
-
-      const total = arr.length
-      const limit = PAGE_SIZE
-      const offset = (query.page - 1) * limit
-
-      return { records: arr.slice(offset, offset + limit), total }
-    }
+  const { data: allBVList } = useQuery({
+    enabled: !!rootDirPath,
+    queryKey: ['bv', 'all', rootDirPath],
+    queryFn: () => fsService.getBVList(rootDirPath || '')
   })
 
   const { data: ownerInfo } = useQuery({
     enabled: !!id,
     queryKey: ['up', 'info', id],
-    queryFn: () => userService.getById(id || '')
+    queryFn: () => userService.getById(id)
+  })
+
+  // 模拟分页
+  const [page, setPage] = useState(1)
+  const [keyword, setKeyword] = useState('')
+  const [searchText, setSearchText] = useState('')
+
+  // reset
+  useEffect(() => {
+    setPage(1)
+    setSearchText('')
+    setKeyword('')
+    setCurrentMid(id)
+  }, [id, setCurrentMid])
+
+  const { data: pageRes, isLoading } = useQuery({
+    queryKey: ['bv', 'pages', allBVList, id, page, keyword],
+    queryFn: async () => {
+      let arr: BVItemFromFile[] = R.clone(allBVList || [])
+
+      if (id) {
+        arr = arr.filter((v) => v.mid === id)
+      }
+
+      if (keyword) {
+        arr = arr.filter((v) => v.videoInfo.title.includes(keyword))
+      }
+
+      arr.sort((a, b) => (b.videoInfo?.pubdate || 0) - (a.videoInfo?.pubdate || 0))
+
+      const total = arr.length
+      const limit = PAGE_SIZE
+      const offset = (page - 1) * limit
+
+      return { records: arr.slice(offset, offset + limit), total }
+    }
   })
 
   const openInBrowser = async () => {
@@ -98,7 +102,6 @@ export default function SpacePage() {
     if (matched?.path) {
       await removeDir(matched?.path, { recursive: true })
       setOpenRemove(false)
-      queryClient.invalidateQueries({ queryKey: ['bv', 'all-in-one'] })
       queryClient.invalidateQueries({ queryKey: ['bv', 'all'] })
       navigate('/home/space')
     }
@@ -154,8 +157,9 @@ export default function SpacePage() {
             enterButton
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
-            onSearch={(txt) => {
-              setQuery((prev) => ({ ...prev, keyword: txt, page: 1 }))
+            onSearch={() => {
+              setPage(1)
+              setKeyword(searchText)
             }}
             allowClear
           />
@@ -177,10 +181,10 @@ export default function SpacePage() {
             className='text-center'
             hideOnSinglePage
             showSizeChanger={false}
-            current={query.page}
+            current={page}
             pageSize={PAGE_SIZE}
             total={pageRes?.total || 0}
-            onChange={(page) => setQuery((prev) => ({ ...prev, page }))}
+            onChange={(page) => setPage(page)}
             showTotal={(total) => `共 ${total} 条`}
           />
         </footer>

@@ -1,12 +1,12 @@
 import { atom, useAtom, useSetAtom } from 'jotai'
 
-// 当前选中的up主的mid
+// 搜索页面缓存的URL
 const stateAtom = atom('')
 
-export function useCurrentMid() {
+export function useCachedUrl() {
   return useAtom(stateAtom)
 }
 
-export function useSetCurrentMid() {
+export function useSetCachedUrl() {
   return useSetAtom(stateAtom)
 }

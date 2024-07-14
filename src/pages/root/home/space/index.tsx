@@ -6,20 +6,15 @@
 
 import OwnerListItem from '@/components/OwnerListItem'
 import { useRootDirPath } from '@/hooks/use-root-dir-path'
-import { fsService } from '@/services/fs'
+import { useAllBVData } from '@/queries/useAllBVData'
 import { cls } from '@/utils/cls'
-import { useQuery } from '@tanstack/react-query'
 import { Avatar } from 'antd'
 import { Suspense } from 'react'
 import { NavLink, Outlet, useParams } from 'react-router-dom'
 
 export default function Space() {
   const rootDirPath = useRootDirPath()
-  const { data: ownerDirs } = useQuery({
-    enabled: !!rootDirPath,
-    queryKey: ['owner-dirs', rootDirPath],
-    queryFn: () => fsService.getOwnerDirs(rootDirPath || '')
-  })
+  const { data: allData } = useAllBVData(rootDirPath)
 
   const mid = useParams().id
   const isAll = !mid
@@ -39,7 +34,7 @@ export default function Space() {
             <span className='truncate text-sm'>全部UP主</span>
           </NavLink>
 
-          {ownerDirs?.map((v) => <OwnerListItem key={v.mid} mid={v.mid} path={v.path} />)}
+          {allData?.ups.map((v) => <OwnerListItem key={v.mid} mid={v.mid} path={v.path} />)}
         </aside>
 
         <main className='flex-1 overflow-auto'>

@@ -5,13 +5,13 @@
  */
 
 import TopHeader from '@/components/TopHeader'
-import { useCurrentMid } from '@/stores/use-current-mid'
+import { useCachedUrl } from '@/stores/use-cached-url'
 import UTabs from '@/ui/UTabs'
 import { Suspense, useMemo } from 'react'
 import { Outlet, useMatch, useNavigate } from 'react-router-dom'
 
 export default function Home() {
-  const [mid] = useCurrentMid()
+  const [cachedUrl] = useCachedUrl()
   const navigate = useNavigate()
   const tabKey = useMatch('/home/:tabKey/*')?.params.tabKey
 
@@ -19,9 +19,9 @@ export default function Home() {
     return [
       { to: 'search', title: '搜索视频' },
       { to: 'tasks', title: '下载任务' },
-      { to: mid ? `space/${mid}` : 'space', title: '本地视频' }
+      { to: cachedUrl || 'space', title: '本地视频' }
     ]
-  }, [mid])
+  }, [cachedUrl])
 
   return (
     <>

@@ -46,12 +46,13 @@ export default function UTabs(props: UTabsProps) {
         {props.items.map((v) => (
           <li
             key={v.key}
+            onClick={() => v.onClick?.(v.key)}
             className={cls(
-              'mx-4 py-2 transition-all font-bold',
+              'mx-4 py-2 transition-all font-bold cursor-pointer',
               !!props.activeKey && v.key.includes(props.activeKey) ? 'text-primary' : 'hover:text-primary/80'
             )}
           >
-            <button onClick={() => v.onClick?.(v.key)}>{v.title}</button>
+            {v.title}
           </li>
         ))}
 
