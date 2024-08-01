@@ -3,12 +3,11 @@ import { exists, readDir, readTextFile } from '@tauri-apps/api/fs'
 import { join } from '@tauri-apps/api/path'
 import * as R from 'ramda'
 
+const midRegex = /^\d{3,}$/ // UP 主 mid 规则
+const bvRegex = /^BV[0-9a-zA-Z]{3,}$/ // BV 视频 id 规则
+
 export const fsService = {
   async getDirTree(rootDirPath: string) {
-    // 过滤 mid 格式的文件夹
-    const midRegex = /^\d{5,}$/
-    const bvRegex = /^BV[0-9a-zA-Z]{5,}$/
-
     const tree = await readDir(rootDirPath, { recursive: true })
 
     return tree
@@ -29,8 +28,6 @@ export const fsService = {
 
   // 获取 UP 主 ID 列表
   async getOwnerIds(rootDirPath: string) {
-    // 过滤 mid 格式的文件夹
-    const midRegex = /^\d{5,}$/
     const tree = await readDir(rootDirPath, { recursive: true })
 
     return tree.filter((item) => R.isNotNil(item.name) && midRegex.test(item.name)).map((item) => item.name!)
@@ -40,8 +37,6 @@ export const fsService = {
   async getBVList(rootDirPath: string) {
     if (!rootDirPath) return []
 
-    const midRegex = /^\d{5,}$/
-    const bvRegex = /^BV[0-9a-zA-Z]{5,}$/
     const tree = await readDir(rootDirPath, { recursive: true })
     const bvList: BVItemFromFile[] = []
 
@@ -79,8 +74,6 @@ export const fsService = {
   async getAllBVData(rootDirPath: string): Promise<{ ups: Array<UserBaseInfoShema>; bvs: Array<BVItemFromFile> }> {
     if (!rootDirPath) return { ups: [], bvs: [] }
 
-    const midRegex = /^\d{5,}$/
-    const bvRegex = /^BV[0-9a-zA-Z]{5,}$/
     const tree = await readDir(rootDirPath, { recursive: true })
 
     // UP ID 列表

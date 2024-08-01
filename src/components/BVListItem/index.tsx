@@ -101,7 +101,7 @@ export default function BVListItem(props: BVListItemProps) {
       <article className={cls(props.className)}>
         <div className='relative'>
           <UImage
-            className='h-36 mb-2 rounded-md cursor-pointer hover:opacity-75 hover:drop-shadow-xl transition-all'
+            className='h-36 mb-2 rounded-md cursor-pointer hover:opacity-75 transition-all'
             src={coverImageURL}
             onClick={openVideo}
           />

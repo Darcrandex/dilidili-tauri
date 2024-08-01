@@ -98,7 +98,7 @@ export default function TaskItem(props: TaskItemProps) {
 
   return (
     <>
-      <div className='group flex space-x-4 rounded-md transition-all hover:bg-slate-50'>
+      <div className='group flex space-x-4 rounded-md transition-all bg-slate-50 hover:opacity-75'>
         <UImage src={props.task.params.videoInfo.pic} className='block w-40 h-auto rounded-md object-cover' />
 
         <article className='flex-1 flex flex-col py-2'>

@@ -52,7 +52,9 @@ export default function SpacePage() {
 
       // 是否指定关键字
       if (query.keyword) {
-        arr = arr.filter((v) => v.videoInfo.title.toLowerCase().includes(query.keyword.trim().toLowerCase()))
+        const regex = new RegExp(query.keyword.trim().toLowerCase(), 'i')
+        // 视频标题或 UP 名称
+        arr = arr.filter((v) => regex.test(v.videoInfo.title) || regex.test(v.videoInfo.owner.name))
       }
 
       // 排序

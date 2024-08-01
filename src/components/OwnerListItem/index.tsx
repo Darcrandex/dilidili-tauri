@@ -29,7 +29,7 @@ export default function OwnerListItem(props: OwnerListItemProps) {
         }
         to={props.mid}
       >
-        <UImage src={data?.card?.face} className='w-8 h-8 rounded-full' />
+        <UImage src={data?.card?.face} className='w-8 h-8 rounded-full flex-shrink-0' />
         <span className='truncate text-sm'>{data?.card?.name}</span>
       </NavLink>
     </>
