@@ -15,7 +15,7 @@ import UEmpty from '@/ui/UEmpty'
 import UImage from '@/ui/UImage'
 import useUrlState from '@ahooksjs/use-url-state'
 import { DeleteOutlined, FolderOpenOutlined, MoreOutlined } from '@ant-design/icons'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useIsFetching, useQuery, useQueryClient } from '@tanstack/react-query'
 import { removeDir } from '@tauri-apps/api/fs'
 import { open as openShell } from '@tauri-apps/api/shell'
 import { Button, Dropdown, Input, Modal, Pagination } from 'antd'
@@ -29,6 +29,7 @@ const PAGE_SIZE = 24
 export default function SpacePage() {
   const rootDirPath = useRootDirPath()
   const { data: allData } = useAllBVData(rootDirPath)
+  const isLoading = useIsFetching() > 0
 
   const id = useParams().id || ''
   const [query, setQuery] = useUrlState({ page: '1', keyword: '' })
@@ -40,7 +41,7 @@ export default function SpacePage() {
     setCachedUrl(`space/${id}?${QueryString.stringify(query)}`)
   }, [id, query, setCachedUrl])
 
-  const { data: pageRes, isLoading } = useQuery({
+  const { data: pageRes } = useQuery({
     queryKey: ['bv', 'pages', id, query, allData?.bvs],
     queryFn: async () => {
       let arr: BVItemFromFile[] = R.clone(allData?.bvs || [])
