@@ -19,7 +19,7 @@ import { Button, Dropdown, Modal } from 'antd'
 import dayjs from 'dayjs'
 import * as R from 'ramda'
 import { useMemo, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
 
 export type BVListItemProps = {
   data: BVItemFromFile
@@ -119,9 +119,12 @@ export default function BVListItem(props: BVListItemProps) {
           <label className='text-xs text-gray-400'>
             {props.showUpName !== false && (
               <>
-                <span className='inline-block hover:text-primary transition-colors cursor-pointer'>
+                <NavLink
+                  to={`/home/space/${videoInfo.owner.mid}`}
+                  className='inline-block hover:text-primary transition-colors cursor-pointer'
+                >
                   {videoInfo.owner.name}
-                </span>
+                </NavLink>
                 <b className='inline-block mx-2'>·</b>
               </>
             )}
