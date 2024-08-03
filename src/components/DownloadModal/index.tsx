@@ -74,7 +74,7 @@ export default function DownloadModal(props: DownloadModalProps) {
   // 视频分p
   const pages = useMemo(() => {
     if (!Array.isArray(props.videoInfo.pages)) return []
-    return props.videoInfo.pages.map((v) => ({ value: v.page, label: v.part }))
+    return props.videoInfo.pages.map((v) => ({ value: v.page, label: v.part?.trim() ? v.part : '无标题' }))
   }, [props.videoInfo])
 
   const [open, setOpen] = useState(false)
