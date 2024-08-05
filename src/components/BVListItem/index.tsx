@@ -115,20 +115,20 @@ export default function BVListItem(props: BVListItemProps) {
 
         <div className='h-12 leading-6 text-sm overflow-clip line-clamp-2'>{videoInfo.title}</div>
 
-        <div className='flex items-center justify-between'>
-          <label className='text-xs text-gray-400'>
+        <div className='flex items-center justify-between space-x-2'>
+          <label className='text-xs text-gray-400 flex items-center flex-1 truncate'>
             {props.showUpName !== false && (
               <>
                 <NavLink
                   to={`/home/space/${videoInfo.owner.mid}`}
-                  className='inline-block hover:text-primary transition-colors cursor-pointer'
+                  className='inline-block hover:text-primary transition-colors cursor-pointer truncate'
                 >
                   {videoInfo.owner.name}
                 </NavLink>
                 <b className='inline-block mx-2'>·</b>
               </>
             )}
-            <span>{dateLabel}</span>
+            <span className='flex-shrink-0'>{dateLabel}</span>
           </label>
 
           <Dropdown
