@@ -4,22 +4,21 @@
  * @author darcrand
  */
 
-import { hasSameKeys, pickVideoInfo } from '@/components/DownloadModal/utils'
-import { mediaService } from '@/services/media'
+import { ALL_BV_DATA_KEY } from '@/queries/useAllBVData'
 import type { BVItemFromFile } from '@/types/global'
 import UImage from '@/ui/UImage'
 import { cls } from '@/utils/cls'
 import { formatSeconds } from '@/utils/common'
-import { DatabaseOutlined, DeleteOutlined, FolderOpenOutlined, LinkOutlined, MoreOutlined } from '@ant-design/icons'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { removeDir, writeTextFile } from '@tauri-apps/api/fs'
+import { DeleteOutlined, FolderOpenOutlined, LinkOutlined, MoreOutlined } from '@ant-design/icons'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { removeDir } from '@tauri-apps/api/fs'
 import { open as openShell } from '@tauri-apps/api/shell'
 import { convertFileSrc } from '@tauri-apps/api/tauri'
-import { Button, Dropdown, Modal } from 'antd'
+import { App, Button, Dropdown, Modal } from 'antd'
 import dayjs from 'dayjs'
 import * as R from 'ramda'
 import { useMemo, useState } from 'react'
-import { NavLink, useNavigate } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 
 export type BVListItemProps = {
   data: BVItemFromFile
@@ -29,6 +28,7 @@ export type BVListItemProps = {
 
 export default function BVListItem(props: BVListItemProps) {
   const { videoInfo, bvid, path: bvPath, children } = props.data
+  const { message } = App.useApp()
 
   const dateLabel = useMemo(() => {
     if (!videoInfo) return ''
@@ -68,33 +68,19 @@ export default function BVListItem(props: BVListItemProps) {
     await openShell(`https://www.bilibili.com/video/${bvid}`)
   }
 
-  const navigate = useNavigate()
   const queryClient = useQueryClient()
   const [openRemove, setOpenRemove] = useState(false)
 
-  const removeVideoFolder = async () => {
-    await removeDir(bvPath, { recursive: true })
-    setOpenRemove(false)
-    queryClient.invalidateQueries({ queryKey: ['bv', 'all'] })
-    navigate('/home/space')
-  }
+  const removeMutation = useMutation({
+    mutationFn: () => removeDir(bvPath, { recursive: true }),
+    onSuccess() {
+      message.success('视频删除成功')
+      setOpenRemove(false)
+      queryClient.invalidateQueries({ queryKey: ALL_BV_DATA_KEY })
+    }
+  })
 
   const pageCount = children?.filter((v) => v.name?.endsWith('.mp4')).length || 0
-
-  // 优化功能
-  // 对应 videoInfo 进行压缩
-  const infoCompressed = hasSameKeys(videoInfo)
-  const compressInfo = async () => {
-    // 重新获取最新的视频信息
-    const latestInfo = await mediaService.info(bvid || '')
-
-    const compressed = pickVideoInfo(latestInfo)
-    const jsonFilePath = children?.find((v) => v.name?.endsWith('.json'))?.path
-    if (jsonFilePath) {
-      await writeTextFile(jsonFilePath, JSON.stringify(compressed))
-      queryClient.invalidateQueries({ queryKey: ['bv', 'all'] })
-    }
-  }
 
   return (
     <>
@@ -142,27 +128,21 @@ export default function BVListItem(props: BVListItemProps) {
                   label: '从B站打开',
                   onClick: openInBrowser
                 },
-                { key: 'remove', icon: <DeleteOutlined />, label: '删除文件夹', onClick: () => setOpenRemove(true) },
-                {
-                  key: 'compress',
-                  icon: <DatabaseOutlined />,
-                  disabled: infoCompressed,
-                  label: '压缩视频信息',
-                  onClick: compressInfo
-                }
+                { key: 'remove', icon: <DeleteOutlined />, label: '删除文件夹', onClick: () => setOpenRemove(true) }
               ]
             }}
           >
-            <Button
-              shape='circle'
-              type='text'
-              icon={<MoreOutlined className={cls(!infoCompressed && 'text-red-500')} />}
-            />
+            <Button shape='circle' type='text' icon={<MoreOutlined />} />
           </Dropdown>
         </div>
       </article>
 
-      <Modal title='删除文件夹' open={openRemove} onCancel={() => setOpenRemove(false)} onOk={removeVideoFolder}>
+      <Modal
+        title='删除文件夹'
+        open={openRemove}
+        onCancel={() => setOpenRemove(false)}
+        onOk={() => removeMutation.mutateAsync()}
+      >
         <p>当前的 BV 视频文件夹中的所有文件都会被删除噢</p>
         <p>确定要删除文件夹吗？</p>
       </Modal>

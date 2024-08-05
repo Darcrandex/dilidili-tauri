@@ -6,7 +6,7 @@
 
 import BVListItem from '@/components/BVListItem'
 import { useRootDirPath } from '@/hooks/use-root-dir-path'
-import { useAllBVData } from '@/queries/useAllBVData'
+import { ALL_BV_DATA_KEY, useAllBVData } from '@/queries/useAllBVData'
 import { fsService } from '@/services/fs'
 import { userService } from '@/services/user'
 import { useSetCachedUrl } from '@/stores/use-cached-url'
@@ -15,10 +15,10 @@ import UEmpty from '@/ui/UEmpty'
 import UImage from '@/ui/UImage'
 import useUrlState from '@ahooksjs/use-url-state'
 import { DeleteOutlined, FolderOpenOutlined, MoreOutlined } from '@ant-design/icons'
-import { useIsFetching, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useIsFetching, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { removeDir } from '@tauri-apps/api/fs'
 import { open as openShell } from '@tauri-apps/api/shell'
-import { Button, Dropdown, Input, Modal, Pagination } from 'antd'
+import { App, Button, Dropdown, Input, Modal, Pagination } from 'antd'
 import QueryString from 'qs'
 import * as R from 'ramda'
 import { useEffect, useState } from 'react'
@@ -27,6 +27,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 const PAGE_SIZE = 24
 
 export default function SpacePage() {
+  const { message } = App.useApp()
   const rootDirPath = useRootDirPath()
   const { data: allData } = useAllBVData(rootDirPath)
   const isLoading = useIsFetching() > 0
@@ -96,16 +97,26 @@ export default function SpacePage() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
 
-  const removeOwnerFolder = async () => {
-    const matched = ownerDirs?.find((v) => v.mid === id)
-    if (matched?.path) {
-      await removeDir(matched?.path, { recursive: true })
+  const removeMutation = useMutation({
+    mutationFn: async () => {
+      const matched = ownerDirs?.find((v) => v.mid === id)
+      if (matched?.path) {
+        await removeDir(matched?.path, { recursive: true })
+      } else {
+        throw new Error('no path')
+      }
+    },
+    onError() {
+      message.error('删除失败')
+    },
+    onSuccess() {
+      message.success('UP主删除成功')
       setOpenRemove(false)
-      queryClient.invalidateQueries({ queryKey: ['bv', 'all-in-one'] })
+      queryClient.invalidateQueries({ queryKey: ALL_BV_DATA_KEY })
       queryClient.invalidateQueries({ queryKey: ['bv', 'all'] })
       navigate('/home/space')
     }
-  }
+  })
 
   return (
     <>
@@ -189,7 +200,12 @@ export default function SpacePage() {
         </footer>
       </div>
 
-      <Modal title='删除文件夹' open={openRemove} onCancel={() => setOpenRemove(false)} onOk={removeOwnerFolder}>
+      <Modal
+        title='删除文件夹'
+        open={openRemove}
+        onCancel={() => setOpenRemove(false)}
+        onOk={() => removeMutation.mutateAsync()}
+      >
         <p>确定要删除文件夹吗？</p>
         <p>这个 Up 所有的视频都会被删除哦</p>
       </Modal>
