@@ -87,31 +87,31 @@ export default function BVListItem(props: BVListItemProps) {
       <article className={cls(props.className)}>
         <div className='relative'>
           <UImage
-            className='h-36 mb-2 rounded-md cursor-pointer hover:opacity-75 transition-all'
+            className='mb-2 h-36 cursor-pointer rounded-md transition-all hover:opacity-75'
             src={coverImageURL}
             onClick={openVideo}
           />
 
-          {pageCount > 1 && <b className='absolute top-1 right-1 !m-0 text-xs text-white'>{pageCount}P</b>}
+          {pageCount > 1 && <b className='absolute right-1 top-1 !m-0 text-xs text-white'>{pageCount}P</b>}
 
-          <span className='absolute bottom-1 right-1 !m-0 px-1 bg-black/20 rounded text-xs text-white'>
+          <span className='absolute bottom-1 right-1 !m-0 rounded bg-black/20 px-1 text-xs text-white'>
             {formatSeconds(videoInfo.duration)}
           </span>
         </div>
 
-        <div className='h-12 leading-6 text-sm overflow-clip line-clamp-2'>{videoInfo.title}</div>
+        <div className='line-clamp-2 h-12 overflow-clip text-sm leading-6'>{videoInfo.title}</div>
 
         <div className='flex items-center justify-between space-x-2'>
-          <label className='text-xs text-gray-400 flex items-center flex-1 truncate'>
+          <label className='flex flex-1 items-center truncate text-xs text-gray-400'>
             {props.showUpName !== false && (
               <>
                 <NavLink
                   to={`/home/space/${videoInfo.owner.mid}`}
-                  className='inline-block hover:text-primary transition-colors cursor-pointer truncate'
+                  className='inline-block cursor-pointer truncate !text-gray-400 transition-colors hover:!text-primary'
                 >
                   {videoInfo.owner.name}
                 </NavLink>
-                <b className='inline-block mx-2'>·</b>
+                <b className='mx-2 inline-block'>·</b>
               </>
             )}
             <span className='flex-shrink-0'>{dateLabel}</span>

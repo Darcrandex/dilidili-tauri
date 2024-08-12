@@ -15,7 +15,7 @@ import UEmpty from '@/ui/UEmpty'
 import UImage from '@/ui/UImage'
 import useUrlState from '@ahooksjs/use-url-state'
 import { DeleteOutlined, FolderOpenOutlined, MoreOutlined } from '@ant-design/icons'
-import { useIsFetching, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { removeDir } from '@tauri-apps/api/fs'
 import { open as openShell } from '@tauri-apps/api/shell'
 import { App, Button, Dropdown, Input, Modal, Pagination } from 'antd'
@@ -29,8 +29,7 @@ const PAGE_SIZE = 24
 export default function SpacePage() {
   const { message } = App.useApp()
   const rootDirPath = useRootDirPath()
-  const { data: allData } = useAllBVData(rootDirPath)
-  const isLoading = useIsFetching() > 0
+  const { data: allData, isLoading: allDataLoading } = useAllBVData(rootDirPath)
 
   const id = useParams().id || ''
   const [query, setQuery] = useUrlState({ page: '1', keyword: '' })
@@ -42,7 +41,7 @@ export default function SpacePage() {
     setCachedUrl(`space/${id}?${QueryString.stringify(query)}`)
   }, [id, query, setCachedUrl])
 
-  const { data: pageRes } = useQuery({
+  const { data: pageRes, isLoading: pageLoading } = useQuery({
     queryKey: ['bv', 'pages', id, query, allData?.bvs],
     queryFn: async () => {
       let arr: BVItemFromFile[] = R.clone(allData?.bvs || [])
@@ -118,27 +117,29 @@ export default function SpacePage() {
     }
   })
 
+  const isLoading = allDataLoading || pageLoading
+
   return (
     <>
-      <div className='max-w-2xl mx-auto p-4'>
+      <div className='mx-auto max-w-2xl p-4'>
         {R.isNotNil(ownerInfo) && (
-          <section className='flex items-center p-4 rounded-lg bg-slate-50'>
-            <UImage src={ownerInfo?.card.face} className='shrink-0 w-20 h-20 rounded-full' />
+          <section className='flex items-center rounded-lg bg-slate-50 p-4'>
+            <UImage src={ownerInfo?.card.face} className='h-20 w-20 shrink-0 rounded-full' />
 
-            <div className='flex-1 mx-4'>
+            <div className='mx-4 flex-1'>
               <p className='space-x-2'>
                 <span
-                  className='font-bold text-xl hover:text-primary transition-colors cursor-pointer'
+                  className='cursor-pointer text-xl font-bold transition-colors hover:text-primary'
                   onClick={() => openInBrowser()}
                 >
                   {ownerInfo?.card.name}
                 </span>
-                <sup className='inline-block px-1 text-xs bg-orange-500 text-white'>
+                <sup className='inline-block bg-orange-500 px-1 text-xs text-white'>
                   lv.{ownerInfo?.card?.level_info?.current_level}
                 </sup>
               </p>
-              <p className='mt-2 text-gray-500 text-sm'>MID:{id}</p>
-              <p className='text-gray-500 text-sm'>{ownerInfo.card.sign}</p>
+              <p className='mt-2 text-sm text-gray-500'>MID:{id}</p>
+              <p className='text-sm text-gray-500'>{ownerInfo.card.sign}</p>
             </div>
 
             <Dropdown
@@ -161,7 +162,7 @@ export default function SpacePage() {
           </section>
         )}
 
-        <div className='flex max-w-sm mx-auto my-10 space-x-4'>
+        <div className='mx-auto my-10 flex max-w-sm space-x-4'>
           <Input.Search
             maxLength={30}
             placeholder='搜索视频'
@@ -175,7 +176,7 @@ export default function SpacePage() {
           />
         </div>
 
-        <ul className='flex flex-wrap -mx-4 my-2'>
+        <ul className='-mx-4 my-2 flex flex-wrap'>
           {pageRes?.records?.map((v) => (
             <li key={v.bvid} className='w-full sm:w-1/2 lg:w-1/3 xl:w-1/4 2xl:w-1/6'>
               <BVListItem data={v} className='m-4' showUpName={!id} />

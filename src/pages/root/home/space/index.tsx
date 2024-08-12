@@ -21,16 +21,16 @@ export default function Space() {
 
   return (
     <>
-      <section className='flex-1 flex h-full'>
-        <aside className='w-40 border-r overflow-auto'>
+      <section className='flex h-full flex-1'>
+        <aside className='w-40 overflow-auto border-r'>
           <NavLink
             className={cls(
-              'flex items-center space-x-2 m-2 p-2 rounded-md transition-all',
-              isAll ? 'text-primary bg-slate-100' : 'hover:bg-slate-50'
+              'm-2 flex items-center space-x-2 rounded-md p-2 transition-all',
+              isAll ? 'bg-slate-100 text-primary' : '!text-gray-500 hover:!bg-slate-50'
             )}
             to=''
           >
-            <Avatar className='w-8 h-8'>all</Avatar>
+            <Avatar className='h-8 w-8'>all</Avatar>
             <span className='truncate text-sm'>全部UP主</span>
           </NavLink>
 

@@ -23,13 +23,13 @@ export default function OwnerListItem(props: OwnerListItemProps) {
       <NavLink
         className={({ isActive }) =>
           cls(
-            'flex items-center space-x-2 m-2 p-2 rounded-md transition-all',
-            isActive ? 'text-primary bg-slate-100' : 'hover:bg-slate-50'
+            'm-2 flex items-center space-x-2 rounded-md p-2 transition-all',
+            isActive ? '!bg-slate-100 text-primary' : '!text-gray-500 hover:!bg-slate-50'
           )
         }
         to={props.mid}
       >
-        <UImage src={data?.card?.face} className='w-8 h-8 rounded-full flex-shrink-0' />
+        <UImage src={data?.card?.face} className='h-8 w-8 flex-shrink-0 rounded-full' />
         <span className='truncate text-sm'>{data?.card?.name}</span>
       </NavLink>
     </>
