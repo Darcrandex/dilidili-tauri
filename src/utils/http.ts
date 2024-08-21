@@ -7,7 +7,7 @@ export function getDefaultHeaders() {
   const session = localStorage.getItem(ECommon.SessionKey) || ''
   return {
     'User-Agent': getUserAgent(),
-    cookie: `${ECommon.SessionKey}=${session}`
+    cookie: session ? `${ECommon.SessionKey}=${session}` : undefined
   }
 }
 
