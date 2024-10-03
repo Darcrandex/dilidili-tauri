@@ -41,7 +41,11 @@ export default function SpacePage() {
     setCachedUrl(`space/${id}?${QueryString.stringify(query)}`)
   }, [id, query, setCachedUrl])
 
-  const { data: pageRes, isLoading: pageLoading } = useQuery({
+  const {
+    data: pageRes,
+    isLoading: pageLoading,
+    isSuccess
+  } = useQuery({
     queryKey: ['bv', 'pages', id, query, allData?.bvs],
     queryFn: async () => {
       let arr: BVItemFromFile[] = R.clone(allData?.bvs || [])
@@ -185,7 +189,7 @@ export default function SpacePage() {
         </ul>
 
         {isLoading && <p className='my-10 text-center text-slate-500'>加载中...</p>}
-        {pageRes?.records?.length === 0 && <UEmpty>啥也没有...</UEmpty>}
+        {isSuccess && pageRes?.records?.length === 0 && <UEmpty>啥也没有...</UEmpty>}
 
         <footer className='my-4'>
           <Pagination
