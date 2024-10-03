@@ -169,7 +169,7 @@ export default function SpacePage() {
         <div className='mx-auto my-10 flex max-w-sm space-x-4'>
           <Input.Search
             maxLength={30}
-            placeholder='搜索视频'
+            placeholder='搜索视频或 UP 主名称'
             enterButton
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
