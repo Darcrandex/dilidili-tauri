@@ -48,7 +48,7 @@ export default function UTabs(props: UTabsProps) {
             key={v.key}
             onClick={() => v.onClick?.(v.key)}
             className={cls(
-              'mx-4 py-2 transition-all font-bold cursor-pointer',
+              'mx-4 cursor-pointer py-2 font-bold transition-all',
               !!props.activeKey && v.key.includes(props.activeKey) ? 'text-primary' : 'hover:text-primary/80'
             )}
           >
@@ -57,10 +57,10 @@ export default function UTabs(props: UTabsProps) {
         ))}
 
         <li
-          className='absolute left-0 bottom-0 m-0 text-center transition-all duration-300 pointer-events-none'
+          className='pointer-events-none absolute bottom-0 left-0 m-0 text-center transition-all duration-300'
           style={style}
         >
-          <i className='absolute left-1/2 top-0 w-6 h-1 bg-primary -translate-x-1/2'></i>
+          <i className='absolute left-1/2 top-0 h-1 w-6 -translate-x-1/2 bg-primary'></i>
         </li>
       </ul>
     </>

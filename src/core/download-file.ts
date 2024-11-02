@@ -13,6 +13,7 @@ export async function downloadFile(downloadURL: string, outputPath: string) {
 
     const headersObj = { ...getDefaultHeaders(), referer: ECommon.Referer }
     await invoke('download_file', { url: downloadURL, dest: outputPath, headers: headersObj })
+    console.log('下载成功', { outputPath })
   } catch (error) {
     console.error('下载失败', error)
     throw error

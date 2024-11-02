@@ -8,6 +8,7 @@ import TaskItem from '@/components/TaskItem'
 import { db } from '@/db'
 import { taskService } from '@/services/task'
 import UEmpty from '@/ui/UEmpty'
+import { ClearOutlined } from '@ant-design/icons'
 import { Button } from 'antd'
 import Modal from 'antd/es/modal/Modal'
 import { useLiveQuery } from 'dexie-react-hooks'
@@ -24,10 +25,10 @@ export default function Tasks() {
 
   return (
     <>
-      <div className='max-w-xl mx-auto p-4'>
+      <div className='mx-auto max-w-xl p-4'>
         <section className='space-y-4'>
           <div className='space-x-4'>
-            <Button disabled={taskList?.length === 0} onClick={() => setOpen(true)}>
+            <Button icon={<ClearOutlined />} disabled={taskList?.length === 0} onClick={() => setOpen(true)}>
               清空下载任务
             </Button>
           </div>

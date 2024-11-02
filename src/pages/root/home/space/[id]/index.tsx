@@ -14,7 +14,7 @@ import type { BVItemFromFile } from '@/types/global'
 import UEmpty from '@/ui/UEmpty'
 import UImage from '@/ui/UImage'
 import useUrlState from '@ahooksjs/use-url-state'
-import { DeleteOutlined, FolderOpenOutlined, MoreOutlined } from '@ant-design/icons'
+import { DeleteOutlined, FolderOpenOutlined, MoreOutlined, ReloadOutlined } from '@ant-design/icons'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { removeDir } from '@tauri-apps/api/fs'
 import { open as openShell } from '@tauri-apps/api/shell'
@@ -29,7 +29,7 @@ const PAGE_SIZE = 24
 export default function SpacePage() {
   const { message } = App.useApp()
   const rootDirPath = useRootDirPath()
-  const { data: allData, isLoading: allDataLoading } = useAllBVData(rootDirPath)
+  const { data: allData, isLoading: allDataLoading, refetch: allDataRefetch } = useAllBVData(rootDirPath)
 
   const id = useParams().id || ''
   const [query, setQuery] = useUrlState({ page: '1', keyword: '' })
@@ -166,18 +166,22 @@ export default function SpacePage() {
           </section>
         )}
 
-        <div className='mx-auto my-10 flex max-w-sm space-x-4'>
-          <Input.Search
-            maxLength={30}
-            placeholder='搜索视频或 UP 主名称'
-            enterButton
-            value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
-            onSearch={(txt) => {
-              setQuery((prev) => ({ ...prev, keyword: txt, page: 1 }))
-            }}
-            allowClear
-          />
+        <div className='mx-auto my-10 flex max-w-sm space-x-2'>
+          <div className='flex-1'>
+            <Input.Search
+              maxLength={30}
+              placeholder='搜索视频或 UP 主名称'
+              enterButton
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
+              onSearch={(txt) => {
+                setQuery((prev) => ({ ...prev, keyword: txt, page: 1 }))
+              }}
+              allowClear
+            />
+          </div>
+
+          <Button type='primary' icon={<ReloadOutlined />} onClick={() => allDataRefetch()} />
         </div>
 
         <ul className='-mx-4 my-2 flex flex-wrap'>

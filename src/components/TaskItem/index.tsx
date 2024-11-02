@@ -49,8 +49,8 @@ export default function TaskItem(props: TaskItemProps) {
     queryKey: ['video', 'playurl', bvid, cid],
     enabled: !!bvid,
     queryFn: () => mediaService.playurl(bvid, cid),
-    gcTime: 3 * 60 * 1000,
-    staleTime: 3 * 60 * 1000
+    gcTime: 60 * 1000,
+    staleTime: 60 * 1000
   })
 
   const status = statusOptions.find((o) => o.value === props.task.status)
@@ -98,20 +98,20 @@ export default function TaskItem(props: TaskItemProps) {
 
   return (
     <>
-      <div className='group flex space-x-4 rounded-md transition-all bg-slate-50 hover:opacity-75'>
-        <UImage src={props.task.params.videoInfo.pic} className='block w-40 h-auto rounded-md object-cover' />
+      <div className='group flex space-x-4 rounded-md bg-slate-50 transition-all hover:opacity-75'>
+        <UImage src={props.task.params.videoInfo.pic} className='block h-24 w-40 rounded-l-md object-cover' />
 
-        <article className='flex-1 flex flex-col py-2'>
-          <p className='leading-6 h-12 overflow-hidden'>{props.task.params.videoInfo.title}</p>
+        <article className='flex flex-1 flex-col justify-between py-2'>
+          <div>
+            <p className='font-bold'>{props.task.params.videoInfo.title}</p>
+            <p className='mt-0 text-sm text-gray-500'>{bvid}</p>
+          </div>
 
-          <p className='flex flex-wrap mt-4 text-sm'>
-            <Tag bordered={false}>{props.task.params.videoInfo.owner.name}</Tag>
-
-            <Tag bordered={false}>P{props.task.params.page}</Tag>
-
-            <Tag bordered={false}>{qualityLabel}</Tag>
-
-            <Tag bordered={false}>{dayjs(props.task.createdAt).format('YYYY-MM-DD HH:mm:ss')}</Tag>
+          <p className='flex flex-wrap items-center space-x-2 text-sm'>
+            <span>{props.task.params.videoInfo.owner.name}</span>
+            <span>P{props.task.params.page}</span>
+            <span>{qualityLabel}</span>
+            <span>{dayjs(props.task.createdAt).format('YYYY-MM-DD HH:mm:ss')}</span>
 
             <Tag bordered={false} color={status?.color} icon={status?.icon}>
               {status?.label}
@@ -119,7 +119,7 @@ export default function TaskItem(props: TaskItemProps) {
           </p>
         </article>
 
-        <div className='px-4 self-center transition-all opacity-0 group-hover:opacity-100'>
+        <div className='self-center px-4 opacity-0 transition-all group-hover:opacity-100'>
           <Dropdown
             trigger={['click']}
             placement='bottomRight'
@@ -148,7 +148,7 @@ export default function TaskItem(props: TaskItemProps) {
               ]
             }}
           >
-            <Button shape='circle' type='text' icon={<MoreOutlined />} />
+            <Button size='large' shape='circle' type='text' icon={<MoreOutlined />} />
           </Dropdown>
         </div>
       </div>

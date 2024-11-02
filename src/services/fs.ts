@@ -26,54 +26,12 @@ export const fsService = {
       .map((item) => ({ mid: item.name!, path: item.path }))
   },
 
-  // 获取 UP 主 ID 列表
-  async getOwnerIds(rootDirPath: string) {
-    const tree = await readDir(rootDirPath, { recursive: true })
-
-    return tree.filter((item) => R.isNotNil(item.name) && midRegex.test(item.name)).map((item) => item.name!)
-  },
-
-  // 获取所有的 BV
-  async getBVList(rootDirPath: string) {
-    if (!rootDirPath) return []
-
-    const tree = await readDir(rootDirPath, { recursive: true })
-    const bvList: BVItemFromFile[] = []
-
-    for (const v of tree) {
-      if (R.isNotNil(v.name) && midRegex.test(v.name)) {
-        const mid = v.name
-        if (R.is(Array, v.children)) {
-          for (const c of v.children) {
-            if (R.isNotNil(c.name) && bvRegex.test(c.name)) {
-              const bvid = c.name
-              const infoPath = await join(c.path, `${bvid}-info.json`)
-              const coverPath = await join(c.path, `${bvid}-cover.jpg`)
-
-              // 过滤没有视频或没有封面的 bv
-              if (!(await exists(infoPath)) || !(await exists(coverPath))) continue
-
-              try {
-                const videoInfo: VideoInfoSchema = JSON.parse(await readTextFile(infoPath))
-                bvList.push({ mid, bvid, videoInfo, path: c.path, children: c.children })
-              } catch (error) {
-                console.log('bv 文件夹中没有视频信息', error)
-              }
-            }
-          }
-        }
-      }
-    }
-
-    return bvList
-  },
-
-  // V2
   // 整合处理所有的视频，和 UP 主信息
   // 用于全局只处理一次请求
   async getAllBVData(rootDirPath: string): Promise<{ ups: Array<UserBaseInfoShema>; bvs: Array<BVItemFromFile> }> {
     if (!rootDirPath) return { ups: [], bvs: [] }
 
+    console.time('getAllBVData')
     const tree = await readDir(rootDirPath, { recursive: true })
 
     // UP ID 列表
@@ -107,6 +65,8 @@ export const fsService = {
         }
       }
     }
+
+    console.timeEnd('getAllBVData')
 
     return { ups: upBaseInfoList, bvs: bvList }
   }

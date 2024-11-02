@@ -51,18 +51,19 @@ export default function Search() {
 
   return (
     <>
-      <div className='max-w-xl mx-auto p-4'>
+      <div className='mx-auto max-w-xl p-4'>
         <section className='mb-4 space-y-4'>
           <div className='invisible' style={{ height: placeholderHeight }}></div>
 
-          <div className='max-w-sm mx-auto'>
+          <div className='mx-auto max-w-xl lg:max-w-sm'>
             <img
               src={logoImage}
               alt=''
-              className={cls('block w-auto h-20 mx-auto mb-12', R.isNotNil(videoInfo) && 'hidden')}
+              className={cls('mx-auto mb-12 block h-20 w-auto', R.isNotNil(videoInfo) && 'hidden')}
             />
 
             <Input.Search
+              className='w-full'
               placeholder='输入视频地址试试看吧  ≖‿≖✧'
               enterButton
               defaultValue={text}
@@ -78,17 +79,20 @@ export default function Search() {
           {!!videoInfo && (
             <>
               <article className='flex items-center'>
-                <UImage src={videoInfo.owner.face} fit='cover' className='w-10 h-10 rounded-full' />
+                <UImage src={videoInfo.owner.face} fit='cover' className='h-10 w-10 rounded-full' />
 
                 <div className='ml-2'>
-                  <p className='text-sm cursor-pointer transition-colors hover:opacity-80'>{videoInfo.owner.name}</p>
+                  <p className='cursor-pointer text-sm transition-colors hover:opacity-80'>{videoInfo.owner.name}</p>
                   <p className='text-sm text-gray-500'>MID: {videoInfo.owner.mid}</p>
                 </div>
               </article>
 
-              <h2 className='font-bold'>{videoInfo.title}</h2>
+              <article>
+                <p className='text-sm text-gray-500'>{bvid}</p>
+                <h2 className='mt-0 font-bold'>{videoInfo.title}</h2>
+              </article>
 
-              <UImage src={videoInfo.pic} fit='contain' className='h-80 lg:h-96 rounded-lg bg-black' />
+              <UImage src={videoInfo.pic} fit='contain' className='h-60 rounded-lg bg-black lg:h-96' />
 
               {!!session && (
                 <p className='text-center'>
@@ -106,7 +110,7 @@ export default function Search() {
               )}
 
               {!session && (
-                <p className='text-center space-x-2'>
+                <p className='space-x-2 text-center'>
                   <span>不</span>
                   <Button type='primary' onClick={() => navigate('/mine', { replace: true })}>
                     登录
