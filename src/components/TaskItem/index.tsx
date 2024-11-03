@@ -141,8 +141,7 @@ export default function TaskItem(props: TaskItemProps) {
                 {
                   key: 'remove',
                   icon: <DeleteOutlined />,
-                  disabled: isPending,
-                  label: '删除任务',
+                  label: isPending ? '强制终止' : '删除任务',
                   onClick: () => onRemove(props.task.id)
                 }
               ]
