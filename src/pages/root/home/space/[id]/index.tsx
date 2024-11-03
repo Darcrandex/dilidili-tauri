@@ -46,7 +46,7 @@ export default function SpacePage() {
     isLoading: pageLoading,
     isSuccess
   } = useQuery({
-    queryKey: ['bv', 'pages', id, query, allData?.bvs],
+    queryKey: ['bv', 'pages', id, query, allData?.bvs?.map((v) => v.bvid)],
     queryFn: async () => {
       let arr: BVItemFromFile[] = R.clone(allData?.bvs || [])
 
