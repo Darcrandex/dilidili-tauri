@@ -88,7 +88,6 @@ export default function Search() {
               </article>
 
               <article>
-                <p className='text-sm text-gray-500'>{bvid}</p>
                 <h2 className='mt-0 font-bold'>{videoInfo.title}</h2>
               </article>
 

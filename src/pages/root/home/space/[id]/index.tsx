@@ -192,8 +192,11 @@ export default function SpacePage() {
           ))}
         </ul>
 
-        {isLoading && <p className='my-10 text-center text-slate-500'>加载中...</p>}
-        {isSuccess && pageRes?.records?.length === 0 && <UEmpty>啥也没有...</UEmpty>}
+        {isLoading ? (
+          <p className='my-10 text-center text-slate-500'>加载中...</p>
+        ) : (
+          isSuccess && pageRes?.records?.length === 0 && <UEmpty>啥也没有...</UEmpty>
+        )}
 
         <footer className='my-4'>
           <Pagination
