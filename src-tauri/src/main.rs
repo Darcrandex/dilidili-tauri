@@ -46,8 +46,7 @@ async fn image_to_base64(url: String) -> Result<String, String> {
 
 fn main() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![download_file])
-        .invoke_handler(tauri::generate_handler![image_to_base64])
+        .invoke_handler(tauri::generate_handler![download_file, image_to_base64])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
