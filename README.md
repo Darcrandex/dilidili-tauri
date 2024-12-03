@@ -1,3 +1,7 @@
+## 感谢
+
+- [bilibili-API-collect](https://github.com/SocialSisterYi/bilibili-API-collect/tree/master)
+
 ## ffmpeg 方案
 
 将所有平台的二进制文件下载到项目，通过环境变量判断平台，并复制对应的文件到 tauri 项目中
