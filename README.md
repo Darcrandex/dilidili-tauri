@@ -28,4 +28,10 @@
 
 1. 修改版本号 `package.json` `src-tauri/tauri.conf.json`
 2. 提交一个tag。 格式为`app-v${version}`，例如`app-v1.1.1`
+
+```bash
+git tag app-v1.1.1
+git push origin --tags
+```
+
 3. 推代码，执行 github-action
