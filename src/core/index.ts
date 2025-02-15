@@ -14,8 +14,6 @@ export async function downloadBV(taskId: string, params: DownloadBVParams, rootD
   const ownerDirPath = await join(rootDirPath, params.mid)
   const bvDirPath = await join(ownerDirPath, params.bvid)
 
-  console.log('下载 BV', params.bvid)
-
   // 初始化 BV 视频文件夹
   if (!(await exists(bvDirPath))) {
     await createDir(bvDirPath, { recursive: true })

@@ -8,7 +8,7 @@ export function useAllBVData(rootDirPath?: string) {
   const res = useQuery({
     enabled: !!rootDirPath,
     queryKey: ALL_BV_DATA_KEY.concat(rootDirPath || ''),
-    queryFn: () => fsService.getAllBVData(rootDirPath || ''),
+    queryFn: () => fsService.getAllBVDataAsync(rootDirPath || ''),
 
     // 缓存 1 小时
     gcTime: 60 * 60 * 1000,

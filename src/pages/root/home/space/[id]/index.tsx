@@ -123,8 +123,6 @@ export default function SpacePage() {
 
   const isLoading = allDataLoading || pageLoading
 
-  console.log('====> pageRes', pageRes)
-
   return (
     <>
       <div className='mx-auto max-w-2xl p-4'>
