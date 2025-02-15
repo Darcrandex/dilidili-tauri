@@ -284,7 +284,8 @@ export interface DownloadBVParams {
   mid: string // UP主 id
   bvid: string // 视频id
   page: number // 分P序号
-  quality: number // 质量编号
+  quality: number // 清晰度编码
+  qualityName: string // 清晰度编码名称
 
   // 当前 BV 的视频信息
   // 为了在数据回填时减少请求

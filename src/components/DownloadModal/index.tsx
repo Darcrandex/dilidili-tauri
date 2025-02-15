@@ -138,6 +138,7 @@ export default function DownloadModal(props: DownloadModalProps) {
             bvid: props.videoInfo.bvid,
             page: p,
             quality: matchedVideo?.id || quality,
+            qualityName: qualityOptions.find((v) => v.value === matchedVideo?.id)?.label || '',
             videoDownloadUrl,
             audioDownloadUrl,
             coverImageUrl: props.videoInfo.pic,
@@ -173,7 +174,7 @@ export default function DownloadModal(props: DownloadModalProps) {
 
       <Modal width={420} open={open} onCancel={onCancel} footer={null}>
         <section className='space-y-4'>
-          <h2 className='mb-8 text-lg font-bold text-center'>下载视频</h2>
+          <h2 className='mb-8 text-center text-lg font-bold'>下载视频</h2>
 
           <div className='flex items-center justify-between'>
             <Select
@@ -189,16 +190,16 @@ export default function DownloadModal(props: DownloadModalProps) {
             </Checkbox>
           </div>
 
-          <div className='h-60 space-y-2 mb-4 overflow-auto'>
+          <div className='mb-4 h-60 space-y-2 overflow-auto'>
             <ul className='space-y-2'>
               {pages.map((v) => (
                 <li
                   key={v.value}
                   className={cls(
-                    'px-2 py-1 rounded-md border cursor-pointer transition-all select-none',
+                    'cursor-pointer select-none rounded-md border px-2 py-1 transition-all',
                     isSelected(v.value)
-                      ? 'bg-primary/10 border-primary'
-                      : 'bg-gray-100 hover:bg-primary/10 border-transparent'
+                      ? 'border-primary bg-primary/10'
+                      : 'border-transparent bg-gray-100 hover:bg-primary/10'
                   )}
                   onClick={() => toggle(v.value)}
                 >

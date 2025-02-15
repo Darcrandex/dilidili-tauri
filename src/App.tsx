@@ -13,9 +13,11 @@ const router = createBrowserRouter(routes)
 export default function App() {
   // 禁用右键菜单
   useEffect(() => {
-    document.addEventListener('contextmenu', (e) => {
-      e.preventDefault()
-    })
+    if (import.meta.env.PROD) {
+      document.addEventListener('contextmenu', (e) => {
+        e.preventDefault()
+      })
+    }
   }, [])
 
   return (
