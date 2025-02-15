@@ -28,7 +28,7 @@ export default function Space() {
     <>
       <PanelGroup direction='horizontal' className='flex h-full flex-1'>
         <Panel id='sidebar' defaultSize={15} minSize={10} maxSize={30} order={1}>
-          <aside className='overflow-auto'>
+          <aside className='h-full overflow-auto'>
             <NavLink
               className={cls(
                 'm-2 flex items-center space-x-2 rounded-md p-2 transition-all',
@@ -50,7 +50,7 @@ export default function Space() {
         />
 
         <Panel minSize={25} order={2}>
-          <main className='overflow-auto'>
+          <main className='h-full overflow-auto'>
             <Suspense fallback={null}>
               <Outlet />
             </Suspense>
