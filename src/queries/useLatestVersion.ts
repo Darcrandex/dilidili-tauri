@@ -3,6 +3,7 @@ import { getUserAgent } from '@/utils/ua'
 import { useQuery } from '@tanstack/react-query'
 import { getVersion } from '@tauri-apps/api/app'
 import { ResponseType, fetch as tauriFetch } from '@tauri-apps/api/http'
+import { useMemo } from 'react'
 
 // 最新的版本
 export function useLatestVersion() {
@@ -28,7 +29,14 @@ export function useLatestVersion() {
     }
   })
 
-  const hasUpdate = !!latestVersion && version !== latestVersion
+  const hasUpdate = useMemo(() => {
+    if (!latestVersion || !version) return false
+
+    const latest = latestVersion.split('.').reduce((a, c) => a + Number(c), 0)
+    const current = version.split('.').reduce((a, c) => a + Number(c), 0)
+
+    return latest > current
+  }, [latestVersion, version])
 
   return {
     version,
