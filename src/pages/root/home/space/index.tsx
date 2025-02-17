@@ -7,9 +7,10 @@
 import OwnerListItem from '@/components/OwnerListItem'
 import { useRootDirPath } from '@/hooks/use-root-dir-path'
 import { useAllBVData } from '@/queries/useAllBVData'
+import { useAdideWidth } from '@/stores/use-aside-wdith'
 import { cls } from '@/utils/cls'
 import { Avatar } from 'antd'
-import { Suspense, useCallback, useRef, useState } from 'react'
+import { Suspense, useCallback, useRef } from 'react'
 import { NavLink, Outlet, useParams } from 'react-router-dom'
 
 export default function Space() {
@@ -20,7 +21,7 @@ export default function Space() {
   const isAll = !mid
 
   // UI
-  const [leftWidth, setLeftWidth] = useState(128)
+  const [leftWidth, setLeftWidth] = useAdideWidth()
   const handleRef = useRef<HTMLElement>(null)
 
   const handleMouseDown = useCallback(
@@ -46,8 +47,15 @@ export default function Space() {
 
       document.addEventListener('mousemove', onMouseMove)
       document.addEventListener('mouseup', onMouseUp)
+
+      return () => {
+        console.log('clear')
+
+        document.removeEventListener('mousemove', onMouseMove)
+        document.removeEventListener('mouseup', onMouseUp)
+      }
     },
-    [leftWidth]
+    [leftWidth, setLeftWidth]
   )
 
   return (
