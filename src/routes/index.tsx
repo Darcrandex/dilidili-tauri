@@ -1,71 +1,41 @@
-import { lazy } from 'react'
-import type { RouteObject } from 'react-router-dom'
-import { Navigate } from 'react-router-dom'
-import { withSuspense } from './with-suspense'
-
-const Root = withSuspense(lazy(() => import('@/pages/root')))
-const Home = withSuspense(lazy(() => import('@/pages/root/home')))
-const Search = withSuspense(lazy(() => import('@/pages/root/home/search')))
-const Space = withSuspense(lazy(() => import('@/pages/root/home/space')))
-const SpacePage = withSuspense(lazy(() => import('@/pages/root/home/space/[id]')))
-const Tasks = withSuspense(lazy(() => import('@/pages/root/home/tasks')))
-const Mine = withSuspense(lazy(() => import('@/pages/root/mine')))
-const Settings = withSuspense(lazy(() => import('@/pages/root/settings')))
-const About = withSuspense(lazy(() => import('@/pages/root/about')))
-const NotFound = withSuspense(lazy(() => import('@/pages/404')))
+import { Navigate, RouteObject } from 'react-router'
+import {
+  AboutPage,
+  HomeLayout,
+  MinePage,
+  NotFound,
+  RootLayout,
+  SearchPage,
+  SettingsPage,
+  SpaceLayout,
+  TasksPage,
+} from './lazy-load'
 
 export const routes: RouteObject[] = [
   {
     path: '/',
-    element: <Root />,
+    element: <RootLayout />,
     children: [
-      { index: true, element: <Navigate to='home' replace /> },
+      { index: true, element: <Navigate to='home' /> },
       {
         path: 'home',
-        element: <Home />,
+        element: <HomeLayout />,
         children: [
-          { index: true, element: <Navigate to='search' replace /> },
-
-          {
-            path: 'search',
-            element: <Search />
-          },
-          {
-            path: 'tasks',
-            element: <Tasks />
-          },
-          {
-            path: 'space',
-            element: <Space />,
-            children: [
-              { index: true, element: <SpacePage /> },
-
-              {
-                path: ':id',
-                element: <SpacePage />
-              }
-            ]
-          }
-        ]
+          { index: true, element: <Navigate to='search' /> },
+          { path: 'search', element: <SearchPage /> },
+          { path: 'tasks', element: <TasksPage /> },
+          { path: 'space', element: <SpaceLayout /> },
+        ],
       },
 
-      {
-        path: 'mine',
-        element: <Mine />
-      },
-      {
-        path: 'settings',
-        element: <Settings />
-      },
-      {
-        path: 'about',
-        element: <About />
-      }
-    ]
+      { path: 'mine', element: <MinePage /> },
+      { path: 'settings', element: <SettingsPage /> },
+      { path: 'about', element: <AboutPage /> },
+    ],
   },
 
   {
     path: '*',
-    element: <NotFound />
-  }
+    element: <NotFound />,
+  },
 ]

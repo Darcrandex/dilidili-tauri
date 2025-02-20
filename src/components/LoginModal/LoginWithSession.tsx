@@ -4,7 +4,7 @@
  * @author darcrand
  */
 
-import { useSession } from '@/stores/use-session'
+import { useSession } from '@/stores/session'
 import { Button, Input } from 'antd'
 import { useState } from 'react'
 

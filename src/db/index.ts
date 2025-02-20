@@ -1,13 +1,12 @@
-import type { DownloadTask } from '@/types/global'
 import Dexie, { Table } from 'dexie'
 
 export class MySubClassedDexie extends Dexie {
-  tasks!: Table<DownloadTask, string>
+  tasks!: Table<AppScope.DownloadTask, string>
 
   constructor() {
-    super('myDatabase')
+    super('dilidili-tasks')
     this.version(1).stores({
-      tasks: 'id, createdAt, status, params'
+      tasks: 'id, createdAt, status, params',
     })
   }
 }

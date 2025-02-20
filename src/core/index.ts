@@ -1,22 +1,25 @@
 // 下载 BV 视频等操作
 
-import { ETaskStatus } from '@/enum/common'
+import { ETaskStatus } from '@/constants/common'
 import { taskService } from '@/services/task'
-import { DownloadBVParams } from '@/types/global'
 import { sleep } from '@/utils/common'
-import { createDir, exists, removeFile } from '@tauri-apps/api/fs'
 import { join } from '@tauri-apps/api/path'
+import { exists, mkdir, remove } from '@tauri-apps/plugin-fs'
 import { downloadFile } from './download-file'
-import { mergeToVideo } from './merge-to-video'
+import { mixingVideo } from './mixing-video'
 import { saveInfo } from './save-info'
 
-export async function downloadBV(taskId: string, params: DownloadBVParams, rootDirPath: string) {
+export async function downloadBV(
+  taskId: string,
+  params: AppScope.DownloadBVParams,
+  rootDirPath: string,
+) {
   const ownerDirPath = await join(rootDirPath, params.mid)
   const bvDirPath = await join(ownerDirPath, params.bvid)
 
   // 初始化 BV 视频文件夹
   if (!(await exists(bvDirPath))) {
-    await createDir(bvDirPath, { recursive: true })
+    await mkdir(bvDirPath, { recursive: true })
   }
 
   const videoFilePath = await join(bvDirPath, `${taskId}_video.m4s`)
@@ -30,7 +33,9 @@ export async function downloadBV(taskId: string, params: DownloadBVParams, rootD
   const pageTitle = params.videoInfo.pages[params.page - 1].part
 
   const str1 = `「${ownerName}」`
-  const str2 = isSinglePage ? videoTitle : [videoTitle, pageTitle].filter(Boolean).join('-')
+  const str2 = isSinglePage
+    ? videoTitle
+    : [videoTitle, pageTitle].filter(Boolean).join('-')
   const str3 = params.qualityName
   const outputFileName = [str1, str2, str3].filter(Boolean).join(' ')
 
@@ -38,20 +43,32 @@ export async function downloadBV(taskId: string, params: DownloadBVParams, rootD
 
   try {
     await taskService.update(taskId, { status: ETaskStatus.Downloading })
-    await downloadFile(params.videoDownloadUrl, videoFilePath)
-    await downloadFile(params.audioDownloadUrl, audioFilePath)
-    await downloadFile(params.coverImageUrl, coverImagePath)
+    await downloadFile({
+      fileUrl: params.videoDownloadUrl,
+      filePath: videoFilePath,
+    })
+    await downloadFile({
+      fileUrl: params.audioDownloadUrl,
+      filePath: audioFilePath,
+    })
+    await downloadFile({
+      fileUrl: params.coverImageUrl,
+      filePath: coverImagePath,
+    })
+
     await saveInfo(videoInfoFilePath, params.videoInfo)
 
     await taskService.update(taskId, { status: ETaskStatus.Merging })
-    await mergeToVideo(videoFilePath, audioFilePath, outputPath)
+    await mixingVideo(videoFilePath, audioFilePath, outputPath)
 
     await taskService.update(taskId, { status: ETaskStatus.Finished })
   } catch (error) {
+    console.log('下载失败', error)
+
     await taskService.update(taskId, { status: ETaskStatus.Failed })
   } finally {
-    await sleep()
-    await removeFile(videoFilePath)
-    await removeFile(audioFilePath)
+    await sleep(200)
+    await remove(videoFilePath)
+    await remove(audioFilePath)
   }
 }

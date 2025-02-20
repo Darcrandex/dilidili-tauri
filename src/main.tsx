@@ -1,33 +1,13 @@
-import { StyleProvider } from '@ant-design/cssinjs'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { App as AntdApp, ConfigProvider } from 'antd'
-import zhCN from 'antd/locale/zh_CN'
-import 'dayjs/locale/zh-cn'
-import ReactDOM from 'react-dom/client'
-import App from './App'
-import './styles.css'
+import { StrictMode } from 'react'
+import { Inspector } from 'react-dev-inspector'
+import { createRoot } from 'react-dom/client'
 
-const root = document.getElementById('root') || document.body
-const client = new QueryClient({
-  defaultOptions: {
-    queries: {
-      refetchOnWindowFocus: false,
-      gcTime: 5 * 60 * 1000,
-      staleTime: 10 * 60 * 1000
-    }
-  }
-})
+import App from './App.tsx'
+import './index.css'
 
-ReactDOM.createRoot(root).render(
-  <>
-    <QueryClientProvider client={client}>
-      <ConfigProvider locale={zhCN} theme={{ token: { colorPrimary: '#fb7299', colorLink: '#fb7299' } }}>
-        <StyleProvider hashPriority='high'>
-          <AntdApp>
-            <App />
-          </AntdApp>
-        </StyleProvider>
-      </ConfigProvider>
-    </QueryClientProvider>
-  </>
+createRoot(document.getElementById('root')!).render(
+  <StrictMode>
+    <Inspector />
+    <App />
+  </StrictMode>,
 )

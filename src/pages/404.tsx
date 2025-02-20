@@ -4,14 +4,19 @@
  * @author darcrand
  */
 
-import { Link } from 'react-router-dom'
+import { Button } from 'antd'
+import { useNavigate } from 'react-router'
 
 export default function NotFound() {
+  const navigate = useNavigate()
   return (
     <>
-      <h1 className='text-center'>NotFound</h1>
-
-      <Link to='/'>Go Home</Link>
+      <h1 className='mt-[20vh] text-center'>
+        <span>404</span>
+        <Button type='link' onClick={() => navigate('/')}>
+          返回首页
+        </Button>
+      </h1>
     </>
   )
 }

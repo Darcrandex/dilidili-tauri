@@ -1,6 +1,5 @@
+import { ETaskStatus } from '@/constants/common'
 import { db } from '@/db'
-import { ETaskStatus } from '@/enum/common'
-import { DownloadBVParams, DownloadTask } from '@/types/global'
 import { uuid } from '@/utils/common'
 
 export const taskService = {
@@ -12,16 +11,16 @@ export const taskService = {
     return db.tasks.get(id)
   },
 
-  create(params: DownloadBVParams) {
+  create(params: AppScope.DownloadBVParams) {
     return db.tasks.add({
       id: uuid(),
       params,
       status: ETaskStatus.Ready,
-      createdAt: Date.now()
+      createdAt: Date.now(),
     })
   },
 
-  update(id: string, dto: Partial<Omit<DownloadTask, 'id'>>) {
+  update(id: string, dto: Partial<Omit<AppScope.DownloadTask, 'id'>>) {
     return db.tasks.update(id, dto)
   },
 
@@ -30,6 +29,9 @@ export const taskService = {
   },
 
   clear() {
+    // 删除旧版本的数据库
+    window.indexedDB.deleteDatabase('myDatabase')
+
     return db.tasks.clear()
-  }
+  },
 }

@@ -1,10 +1,53 @@
-import type { BVItemFromFile, UserBaseInfoShema, VideoInfoSchema } from '@/types/global'
-import { exists, readDir, readTextFile, type FileEntry } from '@tauri-apps/api/fs'
 import { join } from '@tauri-apps/api/path'
+import { exists, readDir, readTextFile } from '@tauri-apps/plugin-fs'
 import * as R from 'ramda'
 
 const midRegex = /^\d{3,}$/ // UP 主 mid 规则
 const bvRegex = /^BV[0-9a-zA-Z]{3,}$/ // BV 视频 id 规则
+
+/**
+ * 递归获取文件夹下所有的文件和子文件夹
+ * @param path 文件夹路径
+ */
+async function readDirTree(path: string): Promise<AppScope.FileEntry[]> {
+  try {
+    // 调用 readDir 函数读取指定路径下的所有条目
+    const entries = await readDir(path)
+    // 用于存储最终的文件条目数组
+    const fileEntries: AppScope.FileEntry[] = []
+
+    // 遍历每个条目
+    for (const entry of entries) {
+      // 创建一个新的 FileEntry 对象
+
+      const entryPath = await join(path, entry.name)
+      const fileEntry: AppScope.FileEntry = {
+        name: entry.name,
+        path: entryPath,
+        isDirectory: entry.isDirectory,
+        isFile: entry.isFile,
+      }
+
+      // 如果当前条目是一个文件夹
+      if (entry.isDirectory) {
+        // 递归调用 readDirTree 函数来获取其所有子条目
+        const children = await readDirTree(entryPath)
+        // 将子条目添加到当前条目的 children 属性中
+        fileEntry.children = children
+      }
+
+      // 将当前条目添加到最终的文件条目数组中
+      fileEntries.push(fileEntry)
+    }
+
+    // 返回最终的文件条目数组
+    return fileEntries
+  } catch (error) {
+    // 处理可能的错误
+    console.error('Error reading directory tree:', error)
+    return []
+  }
+}
 
 // 检查文件是否存在的函数
 async function checkFilesExist(files: string[]): Promise<boolean> {
@@ -13,13 +56,16 @@ async function checkFilesExist(files: string[]): Promise<boolean> {
 }
 
 // 处理单个 UP 文件夹的函数
-async function processUpFolder(v: FileEntry): Promise<{ upInfo: UserBaseInfoShema; bvItems: BVItemFromFile[] }> {
+async function processUpFolder(v: AppScope.FileEntry): Promise<{
+  upInfo: AppScope.UserBaseInfoShema
+  bvItems: AppScope.BVItemFromFile[]
+}> {
   const mid = v.name || ''
-  const upInfo: UserBaseInfoShema = { mid, path: v.path }
-  const bvItems: BVItemFromFile[] = []
+  const upInfo: AppScope.UserBaseInfoShema = { mid, path: v.name }
+  const bvItems: AppScope.BVItemFromFile[] = []
 
   if (R.is(Array, v.children)) {
-    const validBvPromises = v.children.map(async (c: FileEntry) => {
+    const validBvPromises = v.children.map(async (c: AppScope.FileEntry) => {
       if (R.isNotNil(c.name) && bvRegex.test(c.name)) {
         const bvid = c.name
         const infoPath = await join(c.path, `${bvid}-info.json`)
@@ -27,7 +73,9 @@ async function processUpFolder(v: FileEntry): Promise<{ upInfo: UserBaseInfoShem
 
         if (await checkFilesExist([infoPath, coverPath])) {
           try {
-            const videoInfo: VideoInfoSchema = JSON.parse(await readTextFile(infoPath))
+            const videoInfo: AppScope.VideoInfoSchema = JSON.parse(
+              await readTextFile(infoPath),
+            )
             return { mid, bvid, videoInfo, path: c.path, children: c.children }
           } catch (error) {
             console.log('bv 文件夹中没有视频信息', error)
@@ -39,25 +87,34 @@ async function processUpFolder(v: FileEntry): Promise<{ upInfo: UserBaseInfoShem
     })
 
     const validBvResults = await Promise.all(validBvPromises)
-    bvItems.push(...(validBvResults.filter((item) => item !== null) as BVItemFromFile[]))
+    bvItems.push(
+      ...(validBvResults.filter(
+        (item) => item !== null,
+      ) as AppScope.BVItemFromFile[]),
+    )
   }
 
   return { upInfo, bvItems }
 }
 
-async function getAllBVDataAsync(
-  rootDirPath: string
-): Promise<{ ups: Array<UserBaseInfoShema>; bvs: Array<BVItemFromFile> }> {
+/**
+ * 读取资源文件夹中的文件, 构建临时使用的视频列表数据
+ * @param rootDirPath
+ */
+async function getAllBVDataAsync(rootDirPath: string): Promise<{
+  ups: Array<AppScope.UserBaseInfoShema>
+  bvs: Array<AppScope.BVItemFromFile>
+}> {
   if (!rootDirPath) return { ups: [], bvs: [] }
 
   try {
     console.time('getAllBVDataAsync')
-    const tree = await readDir(rootDirPath, { recursive: true })
+    const tree = await readDirTree(rootDirPath)
 
     // UP ID 列表
-    const upBaseInfoList: Array<UserBaseInfoShema> = []
+    const upBaseInfoList: Array<AppScope.UserBaseInfoShema> = []
     // 所有的 BV 列表
-    const bvList: BVItemFromFile[] = []
+    const bvList: AppScope.BVItemFromFile[] = []
 
     const matchedTree = tree.filter((v) => v.name && midRegex.test(v.name))
     const upFolderPromises = matchedTree.map(processUpFolder)
@@ -77,69 +134,5 @@ async function getAllBVDataAsync(
 }
 
 export const fsService = {
-  async getDirTree(rootDirPath: string) {
-    const tree = await readDir(rootDirPath, { recursive: true })
-
-    return tree
-      .filter((item) => R.isNotNil(item.name) && midRegex.test(item.name))
-      .map((item) => ({ ...item, children: item.children?.filter((c) => R.isNotNil(c.name) && bvRegex.test(c.name)) }))
-  },
-
-  // 获取 UP 主 ID 列表
-  async getOwnerDirs(rootDirPath: string) {
-    // 过滤 mid 格式的文件夹
-    const midRegex = /^\d{5,}$/
-    const tree = await readDir(rootDirPath, { recursive: true })
-
-    return tree
-      .filter((item) => R.isNotNil(item.name) && midRegex.test(item.name))
-      .map((item) => ({ mid: item.name!, path: item.path }))
-  },
-
-  // 整合处理所有的视频，和 UP 主信息
-  // 用于全局只处理一次请求
-  async getAllBVData(rootDirPath: string): Promise<{ ups: Array<UserBaseInfoShema>; bvs: Array<BVItemFromFile> }> {
-    if (!rootDirPath) return { ups: [], bvs: [] }
-
-    console.time('getAllBVData')
-    const tree = await readDir(rootDirPath, { recursive: true })
-
-    // UP ID 列表
-    const upBaseInfoList: Array<UserBaseInfoShema> = []
-    // 所有的 BV 列表
-    const bvList: BVItemFromFile[] = []
-
-    for (const v of tree) {
-      if (R.isNotNil(v.name) && midRegex.test(v.name)) {
-        const mid = v.name
-        upBaseInfoList.push({ mid, path: v.path })
-
-        if (R.is(Array, v.children)) {
-          for (const c of v.children) {
-            if (R.isNotNil(c.name) && bvRegex.test(c.name)) {
-              const bvid = c.name
-              const infoPath = await join(c.path, `${bvid}-info.json`)
-              const coverPath = await join(c.path, `${bvid}-cover.jpg`)
-
-              // 过滤没有视频或没有封面的 bv
-              if (!(await exists(infoPath)) || !(await exists(coverPath))) continue
-
-              try {
-                const videoInfo: VideoInfoSchema = JSON.parse(await readTextFile(infoPath))
-                bvList.push({ mid, bvid, videoInfo, path: c.path, children: c.children })
-              } catch (error) {
-                console.log('bv 文件夹中没有视频信息', error)
-              }
-            }
-          }
-        }
-      }
-    }
-
-    console.timeEnd('getAllBVData')
-
-    return { ups: upBaseInfoList, bvs: bvList }
-  },
-
-  getAllBVDataAsync
+  getAllBVDataAsync,
 }

@@ -4,9 +4,9 @@
  * @author darcrand
  */
 
-import { ECommon } from '@/enum/common'
+import { EStorageKey } from '@/constants/common'
 import { userService } from '@/services/user'
-import { useSession } from '@/stores/use-session'
+import { useSession } from '@/stores/session'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import qrcode from 'qrcode'
 import QueryString from 'qs'
@@ -22,7 +22,7 @@ export default function LoginWithCode(props: { onSuccess?: () => void }) {
       const res = await userService.qrcode()
       const base64Url = await qrcode.toDataURL(res.url)
       return { ...res, base64Url }
-    }
+    },
   })
 
   const { data: codeStatus } = useQuery({
@@ -36,16 +36,16 @@ export default function LoginWithCode(props: { onSuccess?: () => void }) {
         throw new Error(res.message)
       }
       return res
-    }
+    },
   })
 
   useEffect(() => {
     const query = codeStatus?.url?.split('?')?.[1]
     if (query) {
       const params = QueryString.parse(query)
-      if (typeof params[ECommon.SessionKey] === 'string') {
+      if (typeof params[EStorageKey.SessionKey] === 'string') {
         console.log('登录成功')
-        updateSession(params[ECommon.SessionKey])
+        updateSession(params[EStorageKey.SessionKey])
         props.onSuccess?.()
       }
     }
@@ -55,12 +55,14 @@ export default function LoginWithCode(props: { onSuccess?: () => void }) {
     <>
       {!!qrcodeRes?.base64Url && (
         <div className='text-center'>
-          <div className='relative inline-block border rounded-md overflow-hidden'>
-            <img src={qrcodeRes.base64Url} alt='' className='w-52 h-52' />
+          <div className='relative inline-block overflow-hidden rounded-md border border-gray-200'>
+            <img src={qrcodeRes.base64Url} alt='' className='h-52 w-52' />
 
             <i
-              className='absolute inset-0 bg-white/90 flex items-center justify-center cursor-pointer transition-all opacity-0 hover:opacity-100'
-              onClick={() => queryClient.invalidateQueries({ queryKey: ['sign', 'qrcode'] })}
+              className='absolute inset-0 flex cursor-pointer items-center justify-center bg-white/90 opacity-0 transition-all hover:opacity-100'
+              onClick={() =>
+                queryClient.invalidateQueries({ queryKey: ['sign', 'qrcode'] })
+              }
             >
               刷新二维码
             </i>

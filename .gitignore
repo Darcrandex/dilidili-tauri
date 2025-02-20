@@ -23,5 +23,8 @@ dist-ssr
 *.sln
 *.sw?
 
-# ffmpeg build
-src-tauri/binaries/ffmpeg*
+*.zip
+*.7z
+
+# 运行阶段使用的 ffmpeg 目录
+src-tauri/binaries

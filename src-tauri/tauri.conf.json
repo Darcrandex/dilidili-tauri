@@ -1,92 +1,48 @@
 {
-  "$schema": "../node_modules/@tauri-apps/cli/schema.json",
+  "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
+  "productName": "dilidili",
+  "version": "0.2.0",
+  "identifier": "com.dilidili.app",
   "build": {
-    "beforeBuildCommand": "pnpm run build",
-    "beforeDevCommand": "pnpm run prebuild && pnpm run dev",
-    "devPath": "http://localhost:1420",
-    "distDir": "../dist"
+    "frontendDist": "../dist",
+    "devUrl": "http://localhost:3000",
+    "beforeDevCommand": "pnpm prebuild && pnpm dev",
+    "beforeBuildCommand": "pnpm prebuild && pnpm build"
   },
-  "package": {
-    "productName": "dilidili-tauri",
-    "version": "0.1.3"
-  },
-  "tauri": {
-    "allowlist": {
-      "all": false,
-
-      "http": {
-        "all": true,
-        "request": true,
-        "scope": ["http://*/**", "https://*/**"]
-      },
-      "fs": {
-        "all": true,
-        "scope": ["*/**"]
-      },
-      "path": {
-        "all": true
-      },
-
-      "shell": {
-        "all": false,
-        "open": "^",
-        "execute": true,
-        "sidecar": true,
-        "scope": [{ "name": "binaries/ffmpeg", "sidecar": true, "args": true }]
-      },
-
-      "dialog": {
-        "all": true
-      },
-
-      "protocol": {
-        "all": true,
-        "asset": true,
-        "assetScope": ["*/**"]
-      }
-    },
-    "bundle": {
-      "active": true,
-      "category": "DeveloperTool",
-      "copyright": "",
-      "deb": {
-        "depends": []
-      },
-      "externalBin": ["binaries/ffmpeg"],
-
-      "icon": ["icons/32x32.png", "icons/128x128.png", "icons/128x128@2x.png", "icons/icon.icns", "icons/icon.ico"],
-      "identifier": "com.darcrand.app.dilidili-tauri",
-      "longDescription": "",
-      "macOS": {
-        "entitlements": null,
-        "exceptionDomain": "",
-        "frameworks": [],
-        "providerShortName": null,
-        "signingIdentity": null
-      },
-      "resources": [],
-      "shortDescription": "",
-      "targets": "all",
-      "windows": {
-        "certificateThumbprint": null,
-        "digestAlgorithm": "sha256",
-        "timestampUrl": ""
-      }
-    },
-    "security": {},
-    "updater": {
-      "active": false
-    },
+  "app": {
     "windows": [
       {
         "title": "dilidili",
-        "fullscreen": false,
-        "resizable": true,
         "width": 800,
         "height": 600,
-        "minWidth": 800,
-        "minHeight": 600
+        "resizable": true,
+        "fullscreen": false
       }
+    ],
+    "security": {
+      "csp": {
+        "default-src": "'self' customprotocol: asset:",
+        "connect-src": "ipc: http://ipc.localhost",
+        "img-src": "'self' asset: http://asset.localhost blob: data:",
+        "style-src": "'unsafe-inline' 'self'"
+      },
+      "assetProtocol": {
+        "enable": true,
+        "scope": ["**/*"]
+      }
+    }
+  },
+  "bundle": {
+    "externalBin": ["binaries/ffmpeg"],
+
+    "active": true,
+    "targets": "all",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
     ]
   }
 }
