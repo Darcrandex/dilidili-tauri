@@ -2,7 +2,10 @@ import { getPreviewImageUrl } from '@/core/request'
 import { cls } from '@/utils/cls'
 import { useQuery } from '@tanstack/react-query'
 
-const isHttpUrl = (url: string) => /^(https?:)?\/\//.test(url)
+function isValidUrl(url: string) {
+  const regex = /^(?!https?:\/\/asset$)https?:\/\//
+  return regex.test(url)
+}
 
 export type UImageProps = {
   src?: string
@@ -18,7 +21,7 @@ export default function ImageView(props: UImageProps) {
     staleTime: 60 * 1000,
     queryKey: ['image', 'preview', props.src],
     queryFn: async () => {
-      if (isHttpUrl(props.src || '')) {
+      if (isValidUrl(props.src || '')) {
         return getPreviewImageUrl(props.src || '')
       } else {
         return props.src
