@@ -4,6 +4,7 @@ import { App as AntdApp, ConfigProvider } from 'antd'
 import zhCN from 'antd/locale/zh_CN'
 import { createBrowserRouter, RouterProvider } from 'react-router'
 
+import { useEffect } from 'react'
 import { routes } from './routes'
 
 const router = createBrowserRouter(routes)
@@ -15,6 +16,15 @@ const queryClient = new QueryClient({
 
 export default function App() {
   const themeColor = '#fb7299'
+
+  useEffect(() => {
+    // const handle = (e: MouseEvent) => e.preventDefault()
+    const handle = () => {}
+    document.addEventListener('contextmenu', handle)
+    return () => {
+      document.removeEventListener('contextmenu', handle)
+    }
+  }, [])
 
   return (
     <>

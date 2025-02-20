@@ -102,9 +102,8 @@ export default function SpacePage() {
           listData?.records?.length === 0 && <Nothing>啥也没有...</Nothing>
         )}
 
-        <footer className='my-4'>
+        <footer className='my-4 flex justify-center'>
           <Pagination
-            className='text-center'
             hideOnSinglePage
             showSizeChanger={false}
             current={query.pageNumber || 1}
