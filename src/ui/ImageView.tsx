@@ -2,9 +2,23 @@ import { getPreviewImageUrl } from '@/core/request'
 import { cls } from '@/utils/cls'
 import { useQuery } from '@tanstack/react-query'
 
-function isValidUrl(url: string) {
+function isNetworkUrl(url?: string) {
+  if (!url) return false
   const regex = /^(?!https?:\/\/asset$)https?:\/\//
   return regex.test(url)
+}
+
+function isVailImageUrl(url?: string) {
+  return new Promise<boolean>((resolve) => {
+    if (!url) {
+      resolve(false)
+      return
+    }
+    const img = new Image()
+    img.onload = () => resolve(true)
+    img.onerror = () => resolve(false)
+    img.src = url
+  })
 }
 
 export type UImageProps = {
@@ -21,10 +35,16 @@ export default function ImageView(props: UImageProps) {
     staleTime: 60 * 1000,
     queryKey: ['image', 'preview', props.src],
     queryFn: async () => {
-      if (isValidUrl(props.src || '')) {
-        return getPreviewImageUrl(props.src || '')
+      const url =
+        !!props.src && isNetworkUrl(props.src)
+          ? await getPreviewImageUrl(props.src)
+          : props.src
+
+      if (await isVailImageUrl(url)) {
+        return url
       } else {
-        return props.src
+        console.error('invalid image url', url)
+        throw new Error('invalid image url')
       }
     },
   })
@@ -33,16 +53,16 @@ export default function ImageView(props: UImageProps) {
     <>
       <div
         className={cls(
-          'min-h-8 bg-slate-100 bg-center bg-no-repeat transition-all',
+          'min-h-8 overflow-hidden bg-slate-100 bg-center bg-no-repeat transition-all',
           props.className,
         )}
-        style={{
-          ...props.style,
-          backgroundImage: isSuccess ? `url(${imageSrc})` : undefined,
-          backgroundSize: props.fit || 'cover',
-        }}
+        style={props.style}
         onClick={props.onClick}
-      ></div>
+      >
+        {isSuccess && (
+          <img src={imageSrc} className='block h-full w-full object-cover' />
+        )}
+      </div>
     </>
   )
 }

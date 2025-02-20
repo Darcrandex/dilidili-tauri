@@ -7,6 +7,7 @@
 import { ALL_BV_DATA_KEY } from '@/hooks/useAllBVData'
 import { useRootDirPath } from '@/hooks/useRootDirPath'
 import { useVideoQuery } from '@/stores/video-query'
+import ImageView from '@/ui/ImageView'
 import { cls } from '@/utils/cls'
 import { formatSeconds } from '@/utils/common'
 import {
@@ -56,9 +57,6 @@ export default function BVListItem(props: BVListItemProps) {
       )?.path
 
       const assetUrl = coverImagePath ? convertFileSrc(coverImagePath) : ''
-
-      console.log('===> url', props.data, coverImagePath, assetUrl)
-
       return assetUrl
     },
   })
@@ -100,9 +98,9 @@ export default function BVListItem(props: BVListItemProps) {
     <>
       <article className={cls(props.className)}>
         <div className='relative'>
-          <img
-            className='mb-2 block h-36 w-full cursor-pointer rounded-md bg-gray-100 object-cover transition-all hover:opacity-75'
-            src={coverImageURL}
+          <ImageView
+            className='mb-2 block h-36 w-full cursor-pointer rounded-md transition-all hover:opacity-75'
+            src={'12332' + coverImageURL}
             onClick={openVideo}
           />
 
