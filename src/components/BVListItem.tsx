@@ -18,7 +18,6 @@ import {
 } from '@ant-design/icons'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { convertFileSrc } from '@tauri-apps/api/core'
-import { join } from '@tauri-apps/api/path'
 import { remove } from '@tauri-apps/plugin-fs'
 import { open as openShell } from '@tauri-apps/plugin-shell'
 import { App, Button, Dropdown, Modal } from 'antd'
@@ -34,7 +33,7 @@ export type BVListItemProps = {
 
 export default function BVListItem(props: BVListItemProps) {
   const { videoInfo, bvid, path: bvPath, children } = props.data
-  const { message, notification } = App.useApp()
+  const { message } = App.useApp()
   const [, setQuery] = useVideoQuery()
   const rootDirPath = useRootDirPath()
 
@@ -56,21 +55,6 @@ export default function BVListItem(props: BVListItemProps) {
       const coverImagePath = children?.find((v) =>
         v.name?.endsWith('.jpg'),
       )?.path
-
-      // debug
-      const ownerDirPath = await join(rootDirPath || '', props.data.mid)
-      const bvDirPath = await join(ownerDirPath, props.data.bvid)
-      const coverImagePath2 = await join(
-        bvDirPath,
-        `${props.data.bvid}-cover.jpg`,
-      )
-
-      if (coverImagePath2) {
-        notification.info({
-          message: 'debug',
-          description: `${coverImagePath} => ${coverImagePath2}`,
-        })
-      }
 
       const assetUrl = coverImagePath ? convertFileSrc(coverImagePath) : ''
       return assetUrl
