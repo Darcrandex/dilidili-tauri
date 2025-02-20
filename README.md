@@ -100,3 +100,12 @@ pnpm dev
   }
 }
 ```
+
+## release
+
+修改 `package.json`和`src-tauri/tauri.conf.json`中的`version`字段; 创建并推送标签; 在`github-action`中执行脚本
+
+```bash
+git tag 'app-v1.1.1'
+git push origin --tags
+```
