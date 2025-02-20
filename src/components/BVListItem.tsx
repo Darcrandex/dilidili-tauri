@@ -57,6 +57,9 @@ export default function BVListItem(props: BVListItemProps) {
       )?.path
 
       const assetUrl = coverImagePath ? convertFileSrc(coverImagePath) : ''
+
+      console.log('===> url', props.data, coverImagePath, assetUrl)
+
       return assetUrl
     },
   })
