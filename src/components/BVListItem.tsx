@@ -7,7 +7,6 @@
 import { ALL_BV_DATA_KEY } from '@/hooks/useAllBVData'
 import { useRootDirPath } from '@/hooks/useRootDirPath'
 import { useVideoQuery } from '@/stores/video-query'
-import ImageView from '@/ui/ImageView'
 import { cls } from '@/utils/cls'
 import { formatSeconds } from '@/utils/common'
 import {
@@ -101,8 +100,8 @@ export default function BVListItem(props: BVListItemProps) {
     <>
       <article className={cls(props.className)}>
         <div className='relative'>
-          <ImageView
-            className='mb-2 h-36 cursor-pointer rounded-md transition-all hover:opacity-75'
+          <img
+            className='mb-2 block h-36 w-full cursor-pointer rounded-md bg-gray-100 object-cover transition-all hover:opacity-75'
             src={coverImageURL}
             onClick={openVideo}
           />
