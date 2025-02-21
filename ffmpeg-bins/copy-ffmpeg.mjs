@@ -12,6 +12,8 @@ const originFilePathMapping = {
   linux: 'ffmpeg-bins/linux/ffmpeg',
 }
 
+const createMessage = (msg = '') => `[copy ffmpeg]: ${msg}`
+
 async function main() {
   // 注意
   // 这里的 ./ 不是当前文件的目录
@@ -27,7 +29,7 @@ async function main() {
   const originFilePath = resolve(rootPath, originFilePathMapping[platform])
 
   if (!originFilePath) {
-    throw new Error(`${platform} 平台不支持`)
+    throw new Error(createMessage(`${platform} 平台不支持`))
   }
 
   // 本地运行时获取当前平台
@@ -35,7 +37,7 @@ async function main() {
   const targetTriple = target || /host: (\S+)/g.exec(rustInfo)[1]
 
   if (!targetTriple) {
-    throw new Error('无法获取 target triple')
+    throw new Error(createMessage('无法获取 target triple'))
   }
 
   // 'binaries/ffmpeg' 名称必须与 'src-tauri/tauri.conf.json' 中定义的名称一致
@@ -45,7 +47,7 @@ async function main() {
   )
 
   if (existsSync(targetFilePath)) {
-    console.log(`文件已存在: ${targetFilePath}`)
+    console.log(createMessage(`${targetFilePath} 已存在`))
     return
   }
 
@@ -57,7 +59,7 @@ async function main() {
   // 其他没有使用到的 ffmpeg 文件不会被打包到程序中
   await promises.copyFile(originFilePath, targetFilePath)
 
-  console.log(`复制成功: ${targetFilePath}`)
+  console.log(createMessage(`复制成功 ${targetFilePath}`))
 }
 
 main()

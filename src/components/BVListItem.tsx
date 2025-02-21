@@ -100,7 +100,7 @@ export default function BVListItem(props: BVListItemProps) {
         <div className='relative'>
           <ImageView
             className='mb-2 block h-36 w-full cursor-pointer rounded-md transition-all hover:opacity-75'
-            src={'12332' + coverImageURL}
+            src={coverImageURL}
             onClick={openVideo}
           />
 

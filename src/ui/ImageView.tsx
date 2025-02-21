@@ -23,7 +23,7 @@ function isVailImageUrl(url?: string) {
 
 export type UImageProps = {
   src?: string
-  fit?: 'cover' | 'contain'
+  fit?: 'cover' | 'contain' // 默认 cover
   onClick?: (e: React.MouseEvent) => void
   className?: string
   style?: React.CSSProperties
@@ -60,7 +60,13 @@ export default function ImageView(props: UImageProps) {
         onClick={props.onClick}
       >
         {isSuccess && (
-          <img src={imageSrc} className='block h-full w-full object-cover' />
+          <img
+            src={imageSrc}
+            className={cls(
+              'block h-full w-full',
+              props.fit === 'contain' ? 'object-contain' : 'object-cover',
+            )}
+          />
         )}
       </div>
     </>

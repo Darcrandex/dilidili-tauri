@@ -1,9 +1,3 @@
-/**
- * @name UTabs
- * @description
- * @author darcrand
- */
-
 import { cls } from '@/utils/cls'
 import { useSize } from 'ahooks'
 import { CSSProperties, useEffect, useRef, useState } from 'react'

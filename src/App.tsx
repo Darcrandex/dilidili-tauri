@@ -18,8 +18,13 @@ export default function App() {
   const themeColor = '#fb7299'
 
   useEffect(() => {
-    // const handle = (e: MouseEvent) => e.preventDefault()
-    const handle = () => {}
+    // 禁用右键功能
+    // 但仍然可以使用快捷键打开调试工具
+    const handle = (e: MouseEvent) => {
+      if (import.meta.env.PROD) {
+        e.preventDefault()
+      }
+    }
     document.addEventListener('contextmenu', handle)
     return () => {
       document.removeEventListener('contextmenu', handle)

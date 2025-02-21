@@ -53,10 +53,14 @@ export default function LoginWithCode(props: { onSuccess?: () => void }) {
 
   return (
     <>
-      {!!qrcodeRes?.base64Url && (
-        <div className='text-center'>
-          <div className='relative inline-block overflow-hidden rounded-md border border-gray-200'>
-            <img src={qrcodeRes.base64Url} alt='' className='h-52 w-52' />
+      <section className='mx-auto h-52 w-52 overflow-hidden rounded-md border border-gray-200 p-2'>
+        {!!qrcodeRes?.url && (
+          <div className='relative'>
+            <img
+              src={qrcodeRes.base64Url}
+              alt=''
+              className='block h-auto w-full'
+            />
 
             <i
               className='absolute inset-0 flex cursor-pointer items-center justify-center bg-white/90 opacity-0 transition-all hover:opacity-100'
@@ -67,8 +71,8 @@ export default function LoginWithCode(props: { onSuccess?: () => void }) {
               刷新二维码
             </i>
           </div>
-        </div>
-      )}
+        )}
+      </section>
     </>
   )
 }

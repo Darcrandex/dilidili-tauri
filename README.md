@@ -101,6 +101,18 @@ pnpm dev
 }
 ```
 
+## debug 调试
+
+打包时添加`--debug`参数可以在打包后的应用中使用调试工具
+
+```bash
+pnpm tauri build --debug
+```
+
+另外可以在`src-tauri/Cargo.toml`配置中添加`devtools`默认开启调试模式
+
+`tauri = { version = "2.2.4", features = ["protocol-asset",  "devtools"] }`
+
 ## release
 
 修改 `package.json`和`src-tauri/tauri.conf.json`中的`version`字段; 创建并推送标签; 在`github-action`中执行脚本

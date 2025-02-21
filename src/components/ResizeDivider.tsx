@@ -21,7 +21,7 @@ export default function ResizeDivider() {
         const dx = e.clientX - startX
         const newWidth = startWidth + dx
         const minWidth = 100
-        const maxWidth = 400
+        const maxWidth = 320
         if (newWidth >= minWidth && newWidth <= maxWidth) {
           setLeftWidth(newWidth)
         }
