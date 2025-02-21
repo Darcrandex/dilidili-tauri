@@ -1,5 +1,7 @@
 # dilidili 重构
 
+一个用于下载和管理 bilibili bv 视频的桌面应用
+
 ## deps
 
 - vitejs
