@@ -56,7 +56,7 @@ export default function SpacePage() {
 
   return (
     <>
-      <section className='mx-auto max-w-5xl p-4'>
+      <section className='mx-auto max-w-7xl p-4'>
         <OwnerCard />
 
         <header className='mx-auto my-10 flex max-w-sm space-x-2'>
@@ -85,7 +85,7 @@ export default function SpacePage() {
           {listData?.records?.map((v) => (
             <li
               key={v.bvid}
-              className='w-full sm:w-1/2 lg:w-1/3 xl:w-1/4 2xl:w-1/6'
+              className='3xl:w-1/8 3xl:1/8 w-full sm:w-1/2 lg:w-1/3 xl:w-1/4 2xl:w-1/6'
             >
               <BVListItem
                 data={v}

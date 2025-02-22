@@ -4,8 +4,11 @@ import { useQuery } from '@tanstack/react-query'
 
 function isNetworkUrl(url?: string) {
   if (!url) return false
-  const regex = /^(?!https?:\/\/asset$)https?:\/\//
-  return regex.test(url)
+  // const regex = /^(?!https?:\/\/asset$)https?:\/\//
+  // return regex.test(url)
+  return (
+    url.startsWith('http') && !url.includes('asset') && !url.includes('tauri')
+  )
 }
 
 function isVailImageUrl(url?: string) {
