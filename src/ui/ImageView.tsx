@@ -4,8 +4,8 @@ import { useQuery } from '@tanstack/react-query'
 
 function isNetworkUrl(url?: string) {
   if (!url) return false
-  // const regex = /^(?!https?:\/\/asset$)https?:\/\//
-  // return regex.test(url)
+
+  // 'asset' 和 'tauri' 是本地资源, 自定义协议
   return (
     url.startsWith('http') && !url.includes('asset') && !url.includes('tauri')
   )

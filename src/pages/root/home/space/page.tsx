@@ -13,7 +13,7 @@ import { useVideoQuery } from '@/stores/video-query'
 import Nothing from '@/ui/Nothing'
 import { ReloadOutlined } from '@ant-design/icons'
 import { useDebounce } from 'ahooks'
-import { Button, Input, Pagination } from 'antd'
+import { Button, Col, Input, Pagination, Row } from 'antd'
 import { useEffect, useMemo, useState } from 'react'
 
 const PAGE_SIZE = 24
@@ -56,7 +56,7 @@ export default function SpacePage() {
 
   return (
     <>
-      <section className='mx-auto max-w-7xl p-4'>
+      <section className='mx-auto max-w-[1600px] p-4'>
         <OwnerCard />
 
         <header className='mx-auto my-10 flex max-w-sm space-x-2'>
@@ -81,20 +81,17 @@ export default function SpacePage() {
           />
         </header>
 
-        <ul className='-mx-4 my-2 flex flex-wrap'>
+        <Row>
           {listData?.records?.map((v) => (
-            <li
-              key={v.bvid}
-              className='3xl:w-1/8 3xl:1/8 w-full sm:w-1/2 lg:w-1/3 xl:w-1/4 2xl:w-1/6'
-            >
+            <Col xs={24} sm={12} lg={8} xl={6} xxl={4} key={v.bvid}>
               <BVListItem
                 data={v}
                 className='m-4'
                 showUpName={query.mid === ECommon.AllMid}
               />
-            </li>
+            </Col>
           ))}
-        </ul>
+        </Row>
 
         {isLoading ? (
           <p className='my-10 text-center text-slate-500'>加载中...</p>
