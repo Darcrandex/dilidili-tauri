@@ -39,7 +39,7 @@ export default function MinePage() {
 
       {isLogin ? (
         <>
-          <div className='mx-auto max-w-2xl p-4'>
+          <div className='mx-auto max-w-7xl p-4'>
             <section className='flex items-center rounded-lg bg-slate-50 p-4'>
               <ImageView
                 src={profile?.face}

@@ -54,7 +54,7 @@ export default function SettingsPage() {
 
   return (
     <>
-      <div className='mx-auto max-w-2xl p-4'>
+      <div className='mx-auto max-w-7xl p-4'>
         <Form layout='vertical'>
           <Form.Item label='视频根目录'>
             <div className='flex gap-2'>

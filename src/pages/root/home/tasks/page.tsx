@@ -20,7 +20,7 @@ export default function TasksPage() {
 
   return (
     <>
-      <section className='g-custom-scrollbar mx-auto h-full max-w-2xl overflow-auto p-4'>
+      <section className='g-custom-scrollbar mx-auto h-full max-w-7xl overflow-auto p-4'>
         <section className='space-y-4'>
           <div className='space-x-4'>
             <Button

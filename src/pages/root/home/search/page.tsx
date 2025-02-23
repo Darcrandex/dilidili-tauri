@@ -51,14 +51,14 @@ export default function SearchPage() {
 
   return (
     <>
-      <div className='mx-auto max-w-2xl p-4'>
+      <div className='mx-auto max-w-7xl p-4'>
         <section className='mb-4 space-y-4'>
           <div
             className='invisible'
             style={{ height: placeholderHeight }}
           ></div>
 
-          <div className='mx-auto max-w-2xl lg:max-w-md'>
+          <div className='mx-auto max-w-7xl lg:max-w-md'>
             <img
               src={logoImage}
               alt=''
