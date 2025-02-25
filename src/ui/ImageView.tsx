@@ -43,8 +43,6 @@ export default function ImageView(props: UImageProps) {
           ? await getPreviewImageUrl(props.src)
           : props.src
 
-      console.log('===>', url)
-
       if (await isVailImageUrl(url)) {
         return url
       } else {

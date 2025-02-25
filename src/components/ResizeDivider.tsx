@@ -36,8 +36,6 @@ export default function ResizeDivider() {
       document.addEventListener('mouseup', onMouseUp)
 
       return () => {
-        console.log('clear')
-
         document.removeEventListener('mousemove', onMouseMove)
         document.removeEventListener('mouseup', onMouseUp)
       }

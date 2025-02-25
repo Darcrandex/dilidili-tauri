@@ -61,7 +61,7 @@ async function processUpFolder(v: AppScope.FileEntry): Promise<{
   bvItems: AppScope.BVItemFromFile[]
 }> {
   const mid = v.name || ''
-  const upInfo: AppScope.UserBaseInfoShema = { mid, path: v.name }
+  const upInfo: AppScope.UserBaseInfoShema = { mid, path: v.path }
   const bvItems: AppScope.BVItemFromFile[] = []
 
   if (R.is(Array, v.children)) {
