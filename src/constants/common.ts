@@ -22,3 +22,12 @@ export enum ETaskStatus {
   Merging = 3,
   Finished = 4,
 }
+
+// indexDB 的 key
+export enum EIndexDBKey {
+  Tasks = 'dilidili-tasks',
+
+  // react-query 持久化存储在 indexDB 的数据对应的数据表名称
+  // 不要修改
+  QueryStorage = 'keyval-store',
+}
