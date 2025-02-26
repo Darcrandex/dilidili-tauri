@@ -10,8 +10,8 @@ export function useAllBVData(rootDirPath?: string) {
     queryKey: ALL_BV_DATA_KEY.concat(rootDirPath || ''),
     queryFn: () => fsService.getAllBVDataAsync(rootDirPath || ''),
 
-    gcTime: 1000 * 60 * 60 * 24 * 7, // 7 天
-    staleTime: 1000 * 60 * 60 * 24, // 1 天
+    gcTime: Infinity,
+    staleTime: 1000 * 60 * 60 * 24 * 7, // 7 天
   })
 
   return res
