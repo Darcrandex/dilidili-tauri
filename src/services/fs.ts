@@ -125,8 +125,14 @@ async function getAllBVDataAsync(rootDirPath: string): Promise<{
       bvList.push(...result.bvItems)
     })
 
+    const sortDesc = (list: AppScope.BVItemFromFile[]) => {
+      return list.sort((a, b) => {
+        return b.videoInfo.pubdate - a.videoInfo.pubdate
+      })
+    }
+
     console.timeEnd('getAllBVDataAsync')
-    return { ups: upBaseInfoList, bvs: bvList }
+    return { ups: upBaseInfoList, bvs: sortDesc(bvList) }
   } catch (error) {
     console.error('读取目录时发生错误', error)
     return { ups: [], bvs: [] }
