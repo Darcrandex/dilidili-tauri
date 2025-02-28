@@ -14,30 +14,6 @@ import { open as openShell } from '@tauri-apps/plugin-shell'
 import { App, Button, Form, Input } from 'antd'
 import * as R from 'ramda'
 
-async function clearAllIndexedDB() {
-  try {
-    // 获取所有已存在的 IndexedDB 数据库名称
-    const databaseNames = await indexedDB.databases()
-    // 遍历每个数据库名称
-    for (const { name } of databaseNames) {
-      if (name) {
-        // 打开一个删除数据库的请求
-        const deleteRequest = indexedDB.deleteDatabase(name)
-        // 处理删除成功的情况
-        deleteRequest.onsuccess = function () {
-          console.log(`Database ${name} deleted successfully.`)
-        }
-        // 处理删除失败的情况
-        deleteRequest.onerror = function () {
-          console.error(`Error deleting database ${name}:`, deleteRequest.error)
-        }
-      }
-    }
-  } catch (error) {
-    console.error('Error getting database names:', error)
-  }
-}
-
 export default function SettingsPage() {
   const queryClient = useQueryClient()
   const [, setSession] = useSession()
