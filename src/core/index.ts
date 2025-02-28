@@ -9,6 +9,23 @@ import { downloadFile } from './download-file'
 import { mixingVideo } from './mixing-video'
 import { saveInfo } from './save-info'
 
+export function getOutputFileName(params: AppScope.DownloadBVParams) {
+  const ownerName = params.videoInfo.owner.name
+  const videoTitle = params.videoInfo.title
+  const isSinglePage = params.videoInfo.pages.length === 1
+  const pageTitle = params.videoInfo.pages[params.page - 1].part
+
+  const str1 = `「${ownerName}」`
+  const str2 = isSinglePage
+    ? videoTitle
+    : [videoTitle, pageTitle].filter(Boolean).join('-')
+  const str3 = params.qualityName
+
+  const outputFileName = [str1, str2, str3].filter(Boolean).join(' ')
+
+  return outputFileName
+}
+
 export async function downloadBV(
   taskId: string,
   params: AppScope.DownloadBVParams,
@@ -26,18 +43,7 @@ export async function downloadBV(
   const audioFilePath = await join(bvDirPath, `${taskId}_audio.m4s`)
   const coverImagePath = await join(bvDirPath, `${params.bvid}-cover.jpg`)
   const videoInfoFilePath = await join(bvDirPath, `${params.bvid}-info.json`)
-
-  const ownerName = params.videoInfo.owner.name
-  const videoTitle = params.videoInfo.title
-  const isSinglePage = params.videoInfo.pages.length === 1
-  const pageTitle = params.videoInfo.pages[params.page - 1].part
-
-  const str1 = `「${ownerName}」`
-  const str2 = isSinglePage
-    ? videoTitle
-    : [videoTitle, pageTitle].filter(Boolean).join('-')
-  const str3 = params.qualityName
-  const outputFileName = [str1, str2, str3].filter(Boolean).join(' ')
+  const outputFileName = getOutputFileName(params)
 
   const outputPath = await join(bvDirPath, `${outputFileName}.mp4`)
 

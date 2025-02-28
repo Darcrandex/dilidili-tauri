@@ -5,6 +5,7 @@
  */
 
 import { ETaskStatus } from '@/constants/common'
+import { getOutputFileName } from '@/core'
 import { useRootDirPath } from '@/hooks/useRootDirPath'
 import { mediaService } from '@/services/media'
 import { taskService } from '@/services/task'
@@ -18,6 +19,7 @@ import {
   DownloadOutlined,
   FolderOpenOutlined,
   MoreOutlined,
+  PlayCircleOutlined,
   SyncOutlined,
 } from '@ant-design/icons'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
@@ -103,6 +105,20 @@ export default function TaskItem(props: TaskItemProps) {
     }
   }
 
+  const onOpenVideo = async () => {
+    if (rootDirPath) {
+      const videoFileName = getOutputFileName(props.task.params)
+      const videoPath = await join(
+        rootDirPath,
+        props.task.params.mid,
+        props.task.params.bvid,
+        `${videoFileName}.mp4`,
+      )
+
+      await openShell(videoPath)
+    }
+  }
+
   const queryClient = useQueryClient()
 
   const onRemove = async (id: string) => {
@@ -176,6 +192,13 @@ export default function TaskItem(props: TaskItemProps) {
                   icon: <FolderOpenOutlined />,
                   label: '打开文件夹',
                   onClick: onOpenDir,
+                },
+                {
+                  key: 'openVideo',
+                  icon: <PlayCircleOutlined />,
+                  label: '打开视频',
+                  disabled: status?.value !== ETaskStatus.Finished,
+                  onClick: onOpenVideo,
                 },
                 {
                   key: 'reDownload',
