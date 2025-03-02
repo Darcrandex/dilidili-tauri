@@ -66,8 +66,9 @@ export default function ImageView(props: UImageProps) {
           <img
             src={imageSrc}
             className={cls(
-              'block h-full w-full',
+              'block h-full w-full transition-all',
               props.fit === 'contain' ? 'object-contain' : 'object-cover',
+              isSuccess ? 'opacity-100' : 'opacity-0',
             )}
           />
         )}
