@@ -41,12 +41,14 @@ export default function SpacePage() {
         (v) =>
           !query.mid || query.mid === ECommon.AllMid || v.mid === query.mid,
       )
-      .filter(
-        (v) =>
-          !keyword ||
-          v.videoInfo?.title?.includes(keyword) ||
-          v.videoInfo?.owner?.name?.includes(keyword),
-      )
+      .filter((v) => {
+        if (!keyword?.trim()) return true
+
+        const title = v.videoInfo?.title?.toLowerCase() || ''
+        const owner = v.videoInfo?.owner?.name?.toLowerCase() || ''
+        const keywordValue = keyword.toLowerCase()
+        return title.includes(keywordValue) || owner.includes(keywordValue)
+      })
 
     return {
       records: list.slice((pageNumber - 1) * pageSize, pageNumber * pageSize),
