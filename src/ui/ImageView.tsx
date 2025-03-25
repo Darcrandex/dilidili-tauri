@@ -1,6 +1,7 @@
 import { getPreviewImageUrl } from '@/core/request'
 import { cls } from '@/utils/cls'
 import { useQuery } from '@tanstack/react-query'
+import { useState } from 'react'
 
 function isNetworkUrl(url?: string) {
   if (!url) return false
@@ -33,7 +34,7 @@ export type UImageProps = {
 }
 
 export default function ImageView(props: UImageProps) {
-  const { data: imageSrc, isSuccess } = useQuery({
+  const { data: imageSrc } = useQuery({
     enabled: !!props.src,
     staleTime: 60 * 1000,
     queryKey: ['image', 'preview', props.src],
@@ -52,6 +53,8 @@ export default function ImageView(props: UImageProps) {
     },
   })
 
+  const [isLoaded, setIsLoaded] = useState(false)
+
   return (
     <>
       <div
@@ -62,16 +65,15 @@ export default function ImageView(props: UImageProps) {
         style={props.style}
         onClick={props.onClick}
       >
-        {isSuccess && (
-          <img
-            src={imageSrc}
-            className={cls(
-              'block h-full w-full transition-all',
-              props.fit === 'contain' ? 'object-contain' : 'object-cover',
-              isSuccess ? 'opacity-100' : 'opacity-0',
-            )}
-          />
-        )}
+        <img
+          onLoad={() => setIsLoaded(true)}
+          src={imageSrc}
+          className={cls(
+            'block h-full w-full',
+            props.fit === 'contain' ? 'object-contain' : 'object-cover',
+            isLoaded ? 'opacity-100' : 'opacity-0',
+          )}
+        />
       </div>
     </>
   )
