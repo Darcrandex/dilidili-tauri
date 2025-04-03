@@ -2,7 +2,7 @@
 
 import { ETaskStatus } from '@/constants/common'
 import { taskService } from '@/services/task'
-import { sleep } from '@/utils/common'
+import { removeInvalidChars, sleep } from '@/utils/common'
 import { join } from '@tauri-apps/api/path'
 import { exists, mkdir, remove } from '@tauri-apps/plugin-fs'
 import { downloadFile } from './download-file'
@@ -21,7 +21,10 @@ export function getOutputFileName(params: AppScope.DownloadBVParams) {
     : [videoTitle, pageTitle].filter(Boolean).join('-')
   const str3 = params.qualityName
 
-  const outputFileName = [str1, str2, str3].filter(Boolean).join(' ')
+  const outputFileName = [str1, str2, str3]
+    .map(removeInvalidChars)
+    .filter(Boolean)
+    .join(' ')
 
   return outputFileName
 }

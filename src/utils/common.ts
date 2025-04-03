@@ -1,3 +1,4 @@
+import { platform } from '@tauri-apps/plugin-os'
 import { customAlphabet } from 'nanoid'
 
 export async function sleep(ms: number = 100) {
@@ -45,4 +46,45 @@ export function formatSeconds(seconds: number): string {
   return [formattedHours, formattedMinutes, formattedSeconds]
     .filter(Boolean)
     .join(':')
+}
+
+/**
+ * 检测文件名是否合法
+ * @param filename
+ * @param osType
+ * @returns boolean
+ */
+export function isValidFileName(filename = '') {
+  const osType = platform()
+
+  let illegalChars = /^/
+
+  if (osType === 'windows') {
+    // Windows 系统下非法字符
+    illegalChars = /[\\/*?:"<>|]/
+  } else {
+    // Unix/Linux 系统下非法字符
+    illegalChars = /[\/]/
+  }
+
+  return !illegalChars.test(filename)
+}
+
+/**
+ * 文件名去除非法字符
+ * @param filename
+ * @returns string
+ */
+export function removeInvalidChars(filename = '') {
+  const osType = platform()
+  let illegalChars = /^/
+  if (osType === 'windows') {
+    // Windows 系统下非法字符
+    illegalChars = /[\\/*?:"<>|]/
+  } else {
+    // Unix/Linux 系统下非法字符
+    illegalChars = /[\/]/
+  }
+
+  return filename.replace(illegalChars, '')
 }
