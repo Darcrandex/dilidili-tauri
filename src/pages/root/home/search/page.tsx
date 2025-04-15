@@ -12,32 +12,34 @@ import { useVideoSearch } from '@/stores/video-search'
 import ImageView from '@/ui/ImageView'
 import Nothing from '@/ui/Nothing'
 import { cls } from '@/utils/cls'
-import { DownloadOutlined } from '@ant-design/icons'
+import { DownloadOutlined, ReloadOutlined } from '@ant-design/icons'
 import { useQuery } from '@tanstack/react-query'
-import { Button, Input } from 'antd'
+import { Button, Input, InputRef, Space } from 'antd'
 import qs from 'qs'
 import * as R from 'ramda'
-import { useMemo } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router'
 
 export default function SearchPage() {
   const navigate = useNavigate()
   const [session] = useSession()
-  const [text, setText] = useVideoSearch()
+  const inputRef = useRef<InputRef>(null)
+  const [keyword, setKeyword] = useVideoSearch()
+  const [text, setText] = useState(keyword)
 
   const bvid = useMemo(() => {
     const regex = /\/video\/(BV[0-9a-zA-Z]+)/m
-    const match = text.match(regex)
+    const match = keyword.match(regex)
     return match?.[1]
-  }, [text])
+  }, [keyword])
 
-  const invalidBVID = !!text.trim() && !bvid
+  const invalidBVID = !!keyword.trim() && !bvid
 
   const p = useMemo(() => {
-    const query = text?.split('?')?.[1]
+    const query = keyword?.split('?')?.[1]
     const params = qs.parse(query)
     return Number.parseInt((params?.p as string) || '1')
-  }, [text])
+  }, [keyword])
 
   const { data: videoInfo } = useQuery({
     enabled: !!bvid,
@@ -68,16 +70,29 @@ export default function SearchPage() {
               )}
             />
 
-            <Input.Search
-              className='w-full'
-              placeholder='输入视频地址试试看吧  ≖‿≖✧'
-              enterButton
-              defaultValue={text}
-              allowClear
-              autoFocus
-              size='large'
-              onSearch={setText}
-            />
+            <Space.Compact block>
+              <Input.Search
+                ref={inputRef}
+                className='w-full'
+                placeholder='输入视频地址试试看吧  ≖‿≖✧'
+                enterButton
+                autoFocus
+                size='large'
+                value={text}
+                onChange={(e) => setText(e.target.value)}
+                onSearch={setKeyword}
+              />
+
+              <Button
+                size='large'
+                type='primary'
+                icon={<ReloadOutlined />}
+                onClick={() => {
+                  setText('')
+                  setKeyword('')
+                }}
+              />
+            </Space.Compact>
 
             {invalidBVID && <Nothing>视频地址不对劲</Nothing>}
           </div>

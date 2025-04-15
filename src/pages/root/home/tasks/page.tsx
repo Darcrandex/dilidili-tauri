@@ -25,7 +25,7 @@ export default function TasksPage() {
           <div className='space-x-4'>
             <Button
               icon={<ClearOutlined />}
-              hidden={taskList?.length === 0}
+              hidden={!taskList || taskList?.length === 0}
               onClick={() => setOpen(true)}
             >
               清空下载任务

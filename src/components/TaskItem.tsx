@@ -19,13 +19,14 @@ import {
   DownloadOutlined,
   FolderOpenOutlined,
   MoreOutlined,
+  PlayCircleFilled,
   PlayCircleOutlined,
   SyncOutlined,
 } from '@ant-design/icons'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { join } from '@tauri-apps/api/path'
 import { open as openShell } from '@tauri-apps/plugin-shell'
-import { Button, Dropdown, Tag } from 'antd'
+import { Button, Dropdown, Space, Tag } from 'antd'
 import * as R from 'ramda'
 import { useMemo } from 'react'
 
@@ -182,47 +183,57 @@ export default function TaskItem(props: TaskItemProps) {
         </article>
 
         <div className='self-center px-4 opacity-0 transition-all group-hover:opacity-100'>
-          <Dropdown
-            trigger={['click']}
-            placement='bottomRight'
-            menu={{
-              items: [
-                {
-                  key: 'openDir',
-                  icon: <FolderOpenOutlined />,
-                  label: '打开文件夹',
-                  onClick: onOpenDir,
-                },
-                {
-                  key: 'openVideo',
-                  icon: <PlayCircleOutlined />,
-                  label: '打开视频',
-                  disabled: status?.value !== ETaskStatus.Finished,
-                  onClick: onOpenVideo,
-                },
-                {
-                  key: 'reDownload',
-                  icon: <DownloadOutlined />,
-                  label: '重新下载',
-                  disabled: isPending,
-                  onClick: onReDownload,
-                },
-                {
-                  key: 'remove',
-                  icon: <DeleteOutlined />,
-                  label: isPending ? '强制终止' : '删除任务',
-                  onClick: () => onRemove(props.task.id),
-                },
-              ],
-            }}
-          >
+          <Space>
             <Button
               size='large'
               shape='circle'
               type='text'
-              icon={<MoreOutlined />}
+              icon={<PlayCircleFilled className='!text-primary' />}
+              hidden={status?.value !== ETaskStatus.Finished}
+              onClick={onOpenVideo}
             />
-          </Dropdown>
+            <Dropdown
+              trigger={['click']}
+              placement='bottomRight'
+              menu={{
+                items: [
+                  {
+                    key: 'openDir',
+                    icon: <FolderOpenOutlined />,
+                    label: '打开文件夹',
+                    onClick: onOpenDir,
+                  },
+                  {
+                    key: 'openVideo',
+                    icon: <PlayCircleOutlined />,
+                    label: '打开视频',
+                    disabled: status?.value !== ETaskStatus.Finished,
+                    onClick: onOpenVideo,
+                  },
+                  {
+                    key: 'reDownload',
+                    icon: <DownloadOutlined />,
+                    label: '重新下载',
+                    disabled: isPending,
+                    onClick: onReDownload,
+                  },
+                  {
+                    key: 'remove',
+                    icon: <DeleteOutlined />,
+                    label: isPending ? '强制终止' : '删除任务',
+                    onClick: () => onRemove(props.task.id),
+                  },
+                ],
+              }}
+            >
+              <Button
+                size='large'
+                shape='circle'
+                type='text'
+                icon={<MoreOutlined className='!text-primary' />}
+              />
+            </Dropdown>
+          </Space>
         </div>
       </div>
     </>
