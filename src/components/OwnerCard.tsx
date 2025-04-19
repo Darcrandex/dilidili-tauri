@@ -115,7 +115,12 @@ export default function OwnerCard() {
             ],
           }}
         >
-          <Button shape='circle' type='text' icon={<MoreOutlined />} />
+          <Button
+            shape='circle'
+            type='text'
+            size='large'
+            icon={<MoreOutlined className='!text-primary' />}
+          />
         </Dropdown>
       </section>
 
