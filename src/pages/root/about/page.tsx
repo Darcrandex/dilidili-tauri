@@ -1,7 +1,7 @@
 import { useLatestVersion } from '@/hooks/useLatestVersion'
 import { useQuery } from '@tanstack/react-query'
 import { getTauriVersion } from '@tauri-apps/api/app'
-import { Descriptions, Space, type DescriptionsProps } from 'antd'
+import { Descriptions, Divider, Space, type DescriptionsProps } from 'antd'
 
 const OWNER = import.meta.env.VITE_APP_GIT_OWNER
 const REPOSITORY = import.meta.env.VITE_APP_GIT_REPO
@@ -65,6 +65,14 @@ export default function AboutPage() {
     <>
       <div className='mx-auto max-w-7xl p-4'>
         <Descriptions title='dilidili' items={items} />
+
+        <Divider />
+        <p className='text-center text-slate-400'>buy a coffee</p>
+        <img
+          src='/images/pay-by-wechat.png'
+          alt='pay'
+          className='mx-auto block h-auto w-48'
+        />
       </div>
     </>
   )
