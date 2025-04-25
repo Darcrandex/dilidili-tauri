@@ -29,7 +29,7 @@ export default function AboutPage() {
     },
     {
       key: 'repo',
-      label: 'GitHub Repo',
+      label: 'GitHub',
       children: (
         <a
           href={`https://github.com/${OWNER}/${REPOSITORY}`}
@@ -67,7 +67,7 @@ export default function AboutPage() {
         <Descriptions title='dilidili' items={items} />
 
         <Divider />
-        <p className='text-center text-slate-400'>buy a coffee</p>
+        <p className='text-center text-slate-400'>buy me a coffee</p>
         <img
           src='/images/pay-by-wechat.png'
           alt='pay'

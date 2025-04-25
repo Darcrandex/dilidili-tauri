@@ -12,7 +12,7 @@ import { useVideoSearch } from '@/stores/video-search'
 import ImageView from '@/ui/ImageView'
 import Nothing from '@/ui/Nothing'
 import { cls } from '@/utils/cls'
-import { DownloadOutlined, ReloadOutlined } from '@ant-design/icons'
+import { DownloadOutlined } from '@ant-design/icons'
 import { useQuery } from '@tanstack/react-query'
 import { Button, Input, InputRef, Space } from 'antd'
 import qs from 'qs'
@@ -77,20 +77,11 @@ export default function SearchPage() {
                 placeholder='输入视频地址试试看吧  ≖‿≖✧'
                 enterButton
                 autoFocus
+                allowClear
                 size='large'
                 value={text}
                 onChange={(e) => setText(e.target.value)}
                 onSearch={setKeyword}
-              />
-
-              <Button
-                size='large'
-                type='primary'
-                icon={<ReloadOutlined />}
-                onClick={() => {
-                  setText('')
-                  setKeyword('')
-                }}
               />
             </Space.Compact>
 

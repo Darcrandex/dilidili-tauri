@@ -13,7 +13,7 @@ import { useVideoQuery } from '@/stores/video-query'
 import Nothing from '@/ui/Nothing'
 import { ReloadOutlined } from '@ant-design/icons'
 import { useDebounce } from 'ahooks'
-import { Button, Col, Input, Pagination, Row, Space } from 'antd'
+import { Button, Col, Input, Pagination, Row } from 'antd'
 import { useEffect, useMemo, useState } from 'react'
 
 const PAGE_SIZE = 24
@@ -58,28 +58,31 @@ export default function SpacePage() {
 
   return (
     <>
-      <section className='mx-auto max-w-[1600px] p-4'>
+      <section className='mx-auto max-w-7xl p-4'>
         <OwnerCard />
 
-        <Space.Compact block className='mx-auto my-10 max-w-sm'>
-          <Input.Search
-            maxLength={30}
-            placeholder='搜索视频或 UP 主名称'
-            enterButton
-            value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
-            onSearch={(txt) => {
-              setQuery((prev) => ({ ...prev, keyword: txt, page: 1 }))
-            }}
-            allowClear
-          />
+        <header className='mx-auto mt-4 flex max-w-full justify-center gap-2 text-center'>
+          <div className='w-96'>
+            <Input.Search
+              maxLength={30}
+              className='w-full'
+              placeholder='搜索视频或 UP 主名称'
+              enterButton
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
+              onSearch={(txt) => {
+                setQuery((prev) => ({ ...prev, keyword: txt, page: 1 }))
+              }}
+              allowClear
+            />
+          </div>
           <Button
             type='primary'
             icon={<ReloadOutlined />}
             loading={isLoading}
             onClick={() => refetchAll()}
           />
-        </Space.Compact>
+        </header>
 
         <Row>
           {listData?.records?.map((v) => (
