@@ -1,7 +1,7 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
   "productName": "dilidili",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "identifier": "com.dilidili.app",
   "build": {
     "frontendDist": "../dist",
@@ -28,13 +28,16 @@
       },
       "assetProtocol": {
         "enable": true,
-        "scope": ["**/*"]
+        "scope": [
+          "**/*"
+        ]
       }
     }
   },
   "bundle": {
-    "externalBin": ["binaries/ffmpeg"],
-
+    "externalBin": [
+      "binaries/ffmpeg"
+    ],
     "active": true,
     "targets": "all",
     "icon": [
