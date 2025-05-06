@@ -2,6 +2,7 @@ import { ECommon } from '@/const/enums'
 import { http } from '@/core/request'
 import { db } from '@/db'
 import { uuid } from '@/utils/common'
+import { orderBy } from 'lodash-es'
 
 export const mediaService = {
   // 获取视频信息
@@ -65,33 +66,28 @@ export const mediaService = {
     pageNumber?: number
     pageSize?: number
   }) {
-    const total = await db.videos
-      .filter(
-        (v) =>
-          !params?.mid || params.mid === ECommon.AllMid || v.mid === params.mid,
-      )
-      .filter(
-        (v) =>
-          !params?.keyword ||
+    const filterFunction = (v: AppScope.VideoItem) => {
+      return (
+        (!params?.mid ||
+          params.mid === ECommon.AllMid ||
+          v.mid === params.mid) &&
+        (!params?.keyword ||
           v.videoInfo.owner.name.includes(params.keyword) ||
-          v.videoInfo.title.includes(params.keyword),
+          v.videoInfo.title.includes(params.keyword))
       )
-      .count()
+    }
 
-    const records = await db.videos
-      .filter(
-        (v) =>
-          !params?.mid || params.mid === ECommon.AllMid || v.mid === params.mid,
-      )
-      .filter(
-        (v) =>
-          !params?.keyword ||
-          v.videoInfo.owner.name.includes(params.keyword) ||
-          v.videoInfo.title.includes(params.keyword),
-      )
-      .offset((params?.pageNumber ?? 1) - 1)
-      .limit(params?.pageSize ?? 10)
-      .toArray()
+    const filteredVideos = db.videos.filter(filterFunction)
+    const total = await filteredVideos.count()
+    const allItems = await filteredVideos.toArray()
+
+    const sorted = orderBy(allItems, ['videoInfo.pubdate'], ['desc'])
+    const pageNumber = params?.pageNumber ?? 1
+    const pageSize = params?.pageSize ?? 10
+    const records = sorted.slice(
+      (pageNumber - 1) * pageSize,
+      pageNumber * pageSize,
+    )
 
     return { records, total }
   },

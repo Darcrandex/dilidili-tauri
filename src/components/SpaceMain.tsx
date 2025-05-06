@@ -7,6 +7,7 @@
 import Nothing from '@/components/Nothing'
 import OwnerCard from '@/components/OwnerCard'
 import VideoItem from '@/components/VideoItem'
+import { ECommon } from '@/const/enums'
 import { useRootDirPath } from '@/hooks/useRootDirPath'
 import { mediaService } from '@/services/media'
 import { useVideoQuery } from '@/stores/video-query'
@@ -21,13 +22,14 @@ export default function SpaceMain() {
   const rootDirPath = useRootDirPath()
 
   const [query, setQuery] = useVideoQuery()
+  const isAll = !query.mid || query.mid === ECommon.AllMid
   const [searchText, setSearchText] = useState<string>()
   useEffect(() => setSearchText(query.keyword), [query.keyword])
 
   const { data, isPending, refetch } = useQuery({
     enabled: !!rootDirPath,
     queryKey: ['video', 'page', query],
-    queryFn: async () => mediaService.page(query),
+    queryFn: async () => mediaService.page({ ...query, pageSize: PAGE_SIZE }),
   })
 
   return (
@@ -62,7 +64,7 @@ export default function SpaceMain() {
         <Row gutter={[22, 22]}>
           {data?.records?.map((v) => (
             <Col xs={24} sm={12} lg={8} xl={6} xxl={4} key={v.id}>
-              <VideoItem data={v} />
+              <VideoItem data={v} showUpName={isAll} />
             </Col>
           ))}
         </Row>

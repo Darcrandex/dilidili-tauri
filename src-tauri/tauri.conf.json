@@ -1,8 +1,8 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
-  "productName": "dilidili-v3",
+  "productName": "dilidili",
   "version": "0.3.0",
-  "identifier": "com.darcrand.dev",
+  "identifier": "com.dilidili.app",
   "build": {
     "frontendDist": "../dist",
     "devUrl": "http://localhost:3090",
