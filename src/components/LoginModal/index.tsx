@@ -33,13 +33,7 @@ export default function LoginModal(props: LoginModalProps) {
         <Button onClick={() => setOpen(true)}>登录</Button>
       )}
 
-      <Modal
-        open={open}
-        onCancel={() => setOpen(false)}
-        footer={null}
-        destroyOnClose
-        width={400}
-      >
+      <Modal open={open} onCancel={() => setOpen(false)} footer={null} destroyOnClose width={400}>
         <Tabs
           defaultActiveKey='1'
           centered

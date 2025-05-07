@@ -8,9 +8,7 @@ import { Button } from 'antd'
 import { useLiveQuery } from 'dexie-react-hooks'
 
 export default function TasksPage() {
-  const taskList = useLiveQuery(() =>
-    db.tasks.orderBy('createdAt').reverse().toArray(),
-  )
+  const taskList = useLiveQuery(() => db.tasks.orderBy('createdAt').reverse().toArray())
 
   const onRemoveAll = async () => {
     modal.confirm({
@@ -27,11 +25,7 @@ export default function TasksPage() {
       <section className='g-custom-scrollbar mx-auto h-full max-w-7xl overflow-auto p-4'>
         <section className='space-y-4'>
           <div className='space-x-4'>
-            <Button
-              icon={<ClearOutlined />}
-              hidden={!taskList || taskList?.length === 0}
-              onClick={onRemoveAll}
-            >
+            <Button icon={<ClearOutlined />} hidden={!taskList || taskList?.length === 0} onClick={onRemoveAll}>
               清空下载任务
             </Button>
           </div>

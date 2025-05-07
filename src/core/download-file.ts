@@ -12,9 +12,7 @@ export async function downloadFile(cfg: {
 }): Promise<void> {
   const headers = new Map()
 
-  const session =
-    localStorage.getItem(EStorageKey.SessionKey) ||
-    import.meta.env.VITE_APP_SESSION
+  const session = localStorage.getItem(EStorageKey.SessionKey) || import.meta.env.VITE_APP_SESSION
 
   // 3 个缺一不可
   headers.set('referer', ECommon.Referer)

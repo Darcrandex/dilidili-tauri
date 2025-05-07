@@ -10,12 +10,7 @@ import { useRootDirPath } from '@/hooks/useRootDirPath'
 import { mediaService } from '@/services/media'
 import { userService } from '@/services/user'
 import { useVideoQuery } from '@/stores/video-query'
-import {
-  DeleteOutlined,
-  FolderOpenOutlined,
-  LinkOutlined,
-  MoreOutlined,
-} from '@ant-design/icons'
+import { DeleteOutlined, FolderOpenOutlined, LinkOutlined, MoreOutlined } from '@ant-design/icons'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { join } from '@tauri-apps/api/path'
 import { exists, remove } from '@tauri-apps/plugin-fs'
@@ -102,10 +97,7 @@ export default function OwnerCard() {
   return (
     <>
       <section className='flex items-center rounded-lg bg-slate-50 p-4'>
-        <ImageView
-          src={ownerInfo?.avatar}
-          className='h-20 w-20 shrink-0 rounded-full'
-        />
+        <ImageView src={ownerInfo?.avatar} className='h-20 w-20 shrink-0 rounded-full' />
 
         <div className='mx-4 flex-1'>
           <p className='space-x-2'>
@@ -140,12 +132,7 @@ export default function OwnerCard() {
             ],
           }}
         >
-          <Button
-            shape='circle'
-            type='text'
-            size='large'
-            icon={<MoreOutlined className='!text-primary' />}
-          />
+          <Button shape='circle' type='text' size='large' icon={<MoreOutlined className='!text-primary' />} />
         </Dropdown>
       </section>
     </>

@@ -11,12 +11,7 @@ import { taskService } from '@/services/task'
 import { useSession } from '@/stores/session'
 import { cls } from '@/utils/cls'
 import { getSimilarQualityVideo } from '@/utils/get-similar-quality-video'
-import {
-  useMutation,
-  useQueries,
-  useQuery,
-  useQueryClient,
-} from '@tanstack/react-query'
+import { useMutation, useQueries, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useSelections } from 'ahooks'
 import { App, Button, Checkbox, Flex, Modal, Select } from 'antd'
 import { first, sortBy } from 'lodash-es'
@@ -47,8 +42,7 @@ export default function DownloadModal(props: DownloadModalProps) {
   const { data: playurlData } = useQuery({
     queryKey: ['video', 'playurl', props.videoInfo.bvid, props.videoInfo.cid],
     enabled: !!props.videoInfo.bvid,
-    queryFn: () =>
-      mediaService.playurl(props.videoInfo.bvid, props.videoInfo.cid),
+    queryFn: () => mediaService.playurl(props.videoInfo.bvid, props.videoInfo.cid),
   })
 
   // 所有视频分p的数据
@@ -129,9 +123,7 @@ export default function DownloadModal(props: DownloadModalProps) {
 
       const taskParamsArr = selectedPages.map((p) => {
         // 根据分p序号找到对应的视频信息
-        const matchedPageInfo = pageInfoResArr.find(
-          (res) => res?.data?.page === p,
-        )?.data?.info
+        const matchedPageInfo = pageInfoResArr.find((res) => res?.data?.page === p)?.data?.info
 
         // id 相同时，bandwidth 不同
         // 先根据 bandwidth 降序
@@ -148,9 +140,7 @@ export default function DownloadModal(props: DownloadModalProps) {
           bvid: props.videoInfo.bvid,
           page: p,
           quality,
-          qualityName:
-            qualityOptions.find((v) => v.value === matchedVideo?.id)?.label ||
-            '',
+          qualityName: qualityOptions.find((v) => v.value === matchedVideo?.id)?.label || '',
           videoDownloadUrl,
           audioDownloadUrl,
           coverImageUrl: props.videoInfo.pic,
@@ -177,11 +167,7 @@ export default function DownloadModal(props: DownloadModalProps) {
 
   return (
     <>
-      {typeof props.trigger === 'function' ? (
-        props.trigger(beforeOpen)
-      ) : (
-        <Button onClick={beforeOpen}>下载</Button>
-      )}
+      {typeof props.trigger === 'function' ? props.trigger(beforeOpen) : <Button onClick={beforeOpen}>下载</Button>}
 
       <Modal width='420px' open={open} onCancel={onCancel} footer={null}>
         <section className='space-y-4'>
@@ -196,11 +182,7 @@ export default function DownloadModal(props: DownloadModalProps) {
               onChange={setQuality}
             />
 
-            <Checkbox
-              checked={allSelected}
-              onClick={toggleAll}
-              indeterminate={partiallySelected}
-            >
+            <Checkbox checked={allSelected} onClick={toggleAll} indeterminate={partiallySelected}>
               全选
             </Checkbox>
           </div>

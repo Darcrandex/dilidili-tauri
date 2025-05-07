@@ -15,9 +15,7 @@ const selectedKeys: (keyof Bilibili.VideoInfoSchema)[] = [
   'pubdate',
 ]
 
-export function pickVideoInfo(
-  info: Bilibili.VideoInfoSchema,
-): Bilibili.VideoInfoSchema {
+export function pickVideoInfo(info: Bilibili.VideoInfoSchema): Bilibili.VideoInfoSchema {
   return pick(info, selectedKeys)
 }
 

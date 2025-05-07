@@ -23,11 +23,7 @@ export default function AboutPage() {
       key: 'author',
       label: '作者',
       children: (
-        <a
-          href={`https://github.com/${OWNER}`}
-          target='_blank'
-          rel='noreferrer'
-        >
+        <a href={`https://github.com/${OWNER}`} target='_blank' rel='noreferrer'>
           {OWNER}
         </a>
       ),
@@ -36,11 +32,7 @@ export default function AboutPage() {
       key: 'repo',
       label: 'GitHub',
       children: (
-        <a
-          href={`https://github.com/${OWNER}/${REPOSITORY}`}
-          target='_blank'
-          rel='noreferrer'
-        >
+        <a href={`https://github.com/${OWNER}/${REPOSITORY}`} target='_blank' rel='noreferrer'>
           dilidili-tauri
         </a>
       ),
@@ -52,11 +44,7 @@ export default function AboutPage() {
         <Space>
           <span>{version}</span>
           {hasUpdate && (
-            <a
-              href={`https://github.com/${OWNER}/${REPOSITORY}/releases/latest`}
-              target='_blank'
-              rel='noreferrer'
-            >
+            <a href={`https://github.com/${OWNER}/${REPOSITORY}/releases/latest`} target='_blank' rel='noreferrer'>
               最新: {latestVersion}
             </a>
           )}
@@ -73,11 +61,7 @@ export default function AboutPage() {
 
         <Divider />
         <p className='text-center text-slate-400'>buy me a coffee</p>
-        <img
-          src='/images/pay-by-wechat.png'
-          alt='pay'
-          className='mx-auto block h-auto w-48'
-        />
+        <img src='/images/pay-by-wechat.png' alt='pay' className='mx-auto block h-auto w-48' />
       </div>
     </>
   )

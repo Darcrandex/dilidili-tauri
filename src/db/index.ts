@@ -11,8 +11,7 @@ export class MyDexie extends Dexie {
     this.version(EIndexDB.Version).stores({
       tasks: 'id, title, createdAt, updatedAt',
       users: 'id, mid, name, avatar, createdAt, updatedAt',
-      videos:
-        'id, mid, ownerName, bvid, page, quality, qualityName, title,  duration, pubdate, createdAt, updatedAt',
+      videos: 'id, mid, ownerName, bvid, page, quality, qualityName, title,  duration, pubdate, createdAt, updatedAt',
     })
   }
 }

@@ -56,17 +56,11 @@ export default function LoginWithCode(props: { onSuccess?: () => void }) {
       <section className='mx-auto h-52 w-52 overflow-hidden rounded-md border border-gray-200 p-2'>
         {!!qrcodeRes?.url && (
           <div className='relative'>
-            <img
-              src={qrcodeRes.base64Url}
-              alt=''
-              className='block h-auto w-full'
-            />
+            <img src={qrcodeRes.base64Url} alt='' className='block h-auto w-full' />
 
             <i
               className='absolute inset-0 flex cursor-pointer items-center justify-center bg-white/90 opacity-0 transition-all hover:opacity-100'
-              onClick={() =>
-                queryClient.invalidateQueries({ queryKey: ['sign', 'qrcode'] })
-              }
+              onClick={() => queryClient.invalidateQueries({ queryKey: ['sign', 'qrcode'] })}
             >
               刷新二维码
             </i>

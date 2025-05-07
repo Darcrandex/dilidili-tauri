@@ -48,9 +48,7 @@ export function formatSeconds(seconds: number): string {
   const formattedMinutes = minutes.toString().padStart(2, '0')
   const formattedSeconds = remainingSeconds.toString().padStart(2, '0')
 
-  return [formattedHours, formattedMinutes, formattedSeconds]
-    .filter(Boolean)
-    .join(':')
+  return [formattedHours, formattedMinutes, formattedSeconds].filter(Boolean).join(':')
 }
 
 /**

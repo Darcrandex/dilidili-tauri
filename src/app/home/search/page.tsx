@@ -56,19 +56,13 @@ export default function SearchPage() {
     <>
       <div className='mx-auto max-w-7xl p-4'>
         <section className='mb-4 space-y-4'>
-          <div
-            className='invisible'
-            style={{ height: placeholderHeight }}
-          ></div>
+          <div className='invisible' style={{ height: placeholderHeight }}></div>
 
           <div className='mx-auto max-w-7xl lg:max-w-md'>
             <img
               src={logoImage}
               alt=''
-              className={cls(
-                'mx-auto mb-12 block h-20 w-auto',
-                !isNil(videoInfo) && 'hidden',
-              )}
+              className={cls('mx-auto mb-12 block h-20 w-auto', !isNil(videoInfo) && 'hidden')}
             />
 
             <Space.Compact block>
@@ -92,19 +86,11 @@ export default function SearchPage() {
           {!!videoInfo && (
             <>
               <article className='flex items-center'>
-                <ImageView
-                  src={videoInfo.owner.face}
-                  fit='cover'
-                  className='h-10 w-10 rounded-full'
-                />
+                <ImageView src={videoInfo.owner.face} fit='cover' className='h-10 w-10 rounded-full' />
 
                 <div className='ml-2'>
-                  <p className='cursor-pointer text-sm transition-colors hover:opacity-80'>
-                    {videoInfo.owner.name}
-                  </p>
-                  <p className='text-sm text-gray-500'>
-                    MID: {videoInfo.owner.mid}
-                  </p>
+                  <p className='cursor-pointer text-sm transition-colors hover:opacity-80'>{videoInfo.owner.name}</p>
+                  <p className='text-sm text-gray-500'>MID: {videoInfo.owner.mid}</p>
                 </div>
               </article>
 
@@ -112,11 +98,7 @@ export default function SearchPage() {
                 <h2 className='mt-0 font-bold'>{videoInfo.title}</h2>
               </article>
 
-              <ImageView
-                src={videoInfo.pic}
-                fit='contain'
-                className='h-60 rounded-lg bg-black lg:h-96'
-              />
+              <ImageView src={videoInfo.pic} fit='contain' className='h-60 rounded-lg bg-black lg:h-96' />
 
               {!!session && (
                 <p className='text-center'>
@@ -125,11 +107,7 @@ export default function SearchPage() {
                     defaultPage={pageIndex}
                     onOk={() => navigate('/home/task', { replace: true })}
                     trigger={(onOpen) => (
-                      <Button
-                        type='primary'
-                        icon={<DownloadOutlined />}
-                        onClick={onOpen}
-                      >
+                      <Button type='primary' icon={<DownloadOutlined />} onClick={onOpen}>
                         下载视频
                       </Button>
                     )}
@@ -140,10 +118,7 @@ export default function SearchPage() {
               {!session && (
                 <p className='space-x-2 text-center'>
                   <span>不</span>
-                  <Button
-                    type='primary'
-                    onClick={() => navigate('/mine', { replace: true })}
-                  >
+                  <Button type='primary' onClick={() => navigate('/mine', { replace: true })}>
                     登录
                   </Button>
                   <span>下载不了视频 (→_←)</span>

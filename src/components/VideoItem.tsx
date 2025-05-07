@@ -9,12 +9,7 @@ import { mediaService } from '@/services/media'
 import { useVideoQuery } from '@/stores/video-query'
 import { cls } from '@/utils/cls'
 import { formatSeconds } from '@/utils/common'
-import {
-  DeleteOutlined,
-  FolderOpenOutlined,
-  LinkOutlined,
-  MoreOutlined,
-} from '@ant-design/icons'
+import { DeleteOutlined, FolderOpenOutlined, LinkOutlined, MoreOutlined } from '@ant-design/icons'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { convertFileSrc } from '@tauri-apps/api/core'
 import { join } from '@tauri-apps/api/path'
@@ -26,11 +21,7 @@ import { useMemo } from 'react'
 import { modal } from './GlobalAntdMessage'
 import ImageView from './ImageView'
 
-export default function VideoItem(props: {
-  data: AppScope.VideoItem
-  showUpName?: boolean
-  className?: string
-}) {
+export default function VideoItem(props: { data: AppScope.VideoItem; showUpName?: boolean; className?: string }) {
   const { mid, bvid, videoInfo } = props.data
   const { message } = AntdApp.useApp()
   const [, setQuery] = useVideoQuery()
@@ -151,9 +142,7 @@ export default function VideoItem(props: {
           </span>
         </div>
 
-        <div className='line-clamp-2 h-12 overflow-clip text-sm leading-6'>
-          {videoInfo.title}
-        </div>
+        <div className='line-clamp-2 h-12 overflow-clip text-sm leading-6'>{videoInfo.title}</div>
 
         <div className='flex items-center justify-between space-x-2'>
           <label className='flex flex-1 items-center truncate text-xs text-gray-400'>

@@ -16,9 +16,7 @@ export type IProps = {
 export default function NavTabs(props: IProps) {
   const winSize = useSize(() => window.document.body)
   const refContainer = useRef<HTMLUListElement>(null)
-  const currIndex = props.items.findIndex(
-    (v) => !!props.activeKey && v.key.includes(props.activeKey),
-  )
+  const currIndex = props.items.findIndex((v) => !!props.activeKey && v.key.includes(props.activeKey))
   const [style, setStyle] = useState<CSSProperties>()
 
   useEffect(() => {

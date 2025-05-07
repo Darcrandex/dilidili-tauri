@@ -33,18 +33,13 @@ export default function MinePage() {
 
   return (
     <>
-      {isLoading && (
-        <p className='my-10 text-center text-slate-400'>loading...</p>
-      )}
+      {isLoading && <p className='my-10 text-center text-slate-400'>loading...</p>}
 
       {isLogin ? (
         <>
           <div className='mx-auto max-w-7xl p-4'>
             <section className='flex items-center rounded-lg bg-slate-50 p-4'>
-              <ImageView
-                src={profile?.face}
-                className='h-20 w-20 rounded-full'
-              />
+              <ImageView src={profile?.face} className='h-20 w-20 rounded-full' />
 
               <div className='ml-4'>
                 <p className='space-x-2'>
@@ -52,18 +47,12 @@ export default function MinePage() {
                   <sup className='inline-block bg-orange-500 px-1 text-xs text-white'>
                     lv.{profile?.level_info.current_level}
                   </sup>
-                  <sup className='bg-primary rounded-full px-2 py-1 text-xs text-white'>
-                    {profile.vip_label.text}
-                  </sup>
+                  <sup className='bg-primary rounded-full px-2 py-1 text-xs text-white'>{profile.vip_label.text}</sup>
                 </p>
                 <p className='mt-2 text-sm text-gray-500'>MID:{profile?.mid}</p>
               </div>
 
-              <Button
-                className='ml-auto'
-                icon={<LogoutOutlined />}
-                onClick={onLogout}
-              >
+              <Button className='ml-auto' icon={<LogoutOutlined />} onClick={onLogout}>
                 退出登录
               </Button>
             </section>

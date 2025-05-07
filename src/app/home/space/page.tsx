@@ -16,10 +16,7 @@ import { useMemo } from 'react'
 export default function SpacePage() {
   const list = useLiveQuery(() => db.users.toArray())
   const allUps = useMemo(
-    () => [
-      { id: ECommon.AllMid, mid: ECommon.AllMid, name: 'All', avatar: '' },
-      ...(list || []),
-    ],
+    () => [{ id: ECommon.AllMid, mid: ECommon.AllMid, name: 'All', avatar: '' }, ...(list || [])],
     [list],
   )
 
@@ -28,10 +25,7 @@ export default function SpacePage() {
   return (
     <>
       <section className='flex h-full flex-1'>
-        <aside
-          className='g-custom-scrollbar flex-shrink-0 overflow-y-auto'
-          style={{ width: leftWidth }}
-        >
+        <aside className='g-custom-scrollbar flex-shrink-0 overflow-y-auto' style={{ width: leftWidth }}>
           {allUps.map((v) => (
             <OwnerListItem key={v.mid} data={v} />
           ))}

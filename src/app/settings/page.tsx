@@ -85,9 +85,7 @@ export default function SettingsPage() {
         <div>
           <p>将尝试从 "{rootDirPath}" 解析文件, 并更新到数据库</p>
           <p>
-            注意: 该操作会先清空当前数据库,
-            如果已经有视频文件,请将当前的视频文件合并到 "{rootDirPath}"
-            目录下再操作
+            注意: 该操作会先清空当前数据库, 如果已经有视频文件,请将当前的视频文件合并到 "{rootDirPath}" 目录下再操作
           </p>
         </div>
       ),

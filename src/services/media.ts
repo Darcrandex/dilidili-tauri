@@ -7,25 +7,19 @@ import { orderBy } from 'lodash-es'
 export const mediaService = {
   // 获取视频信息
   info: (bvid: string) =>
-    http.get<Bilibili.VideoInfoSchema>(
-      'https://api.bilibili.com/x/web-interface/view',
-      {
-        bvid,
-      },
-    ),
+    http.get<Bilibili.VideoInfoSchema>('https://api.bilibili.com/x/web-interface/view', {
+      bvid,
+    }),
 
   // 获取分P视频下载地址
   // https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/video/videostream_url.md#%E8%8E%B7%E5%8F%96%E8%A7%86%E9%A2%91%E6%B5%81%E5%9C%B0%E5%9D%80_web%E7%AB%AF
   playurl: (bvid: string, cid: number) =>
-    http.get<Bilibili.PageInfoSchema>(
-      'https://api.bilibili.com/x/player/playurl',
-      {
-        bvid,
-        cid: cid.toString(),
-        fnval: '1040',
-        fourk: '1',
-      },
-    ),
+    http.get<Bilibili.PageInfoSchema>('https://api.bilibili.com/x/player/playurl', {
+      bvid,
+      cid: cid.toString(),
+      fnval: '1040',
+      fourk: '1',
+    }),
 
   async create(data: Omit<AppScope.VideoItem, 'id' | 'createdAt'>) {
     // 每个 video 视为一个 bv 视频
@@ -43,13 +37,9 @@ export const mediaService = {
     const allBvids = arr.map((item) => item.bvid)
 
     // check is exist before add
-    const existBvids = await db.videos
-      .filter((v) => allBvids.includes(v.bvid))
-      .toArray()
+    const existBvids = await db.videos.filter((v) => allBvids.includes(v.bvid)).toArray()
 
-    const filteredArr = arr.filter(
-      (item) => !existBvids.some((v) => v.bvid === item.bvid),
-    )
+    const filteredArr = arr.filter((item) => !existBvids.some((v) => v.bvid === item.bvid))
 
     await db.videos.bulkAdd(
       filteredArr.map((item) => ({
@@ -60,17 +50,10 @@ export const mediaService = {
     )
   },
 
-  async page(params?: {
-    mid?: string
-    keyword?: string
-    pageNumber?: number
-    pageSize?: number
-  }) {
+  async page(params?: { mid?: string; keyword?: string; pageNumber?: number; pageSize?: number }) {
     const filterFunction = (v: AppScope.VideoItem) => {
       return (
-        (!params?.mid ||
-          params.mid === ECommon.AllMid ||
-          v.mid === params.mid) &&
+        (!params?.mid || params.mid === ECommon.AllMid || v.mid === params.mid) &&
         (!params?.keyword ||
           v.videoInfo.owner.name.includes(params.keyword) ||
           v.videoInfo.title.includes(params.keyword))
@@ -84,10 +67,7 @@ export const mediaService = {
     const sorted = orderBy(allItems, ['videoInfo.pubdate'], ['desc'])
     const pageNumber = params?.pageNumber ?? 1
     const pageSize = params?.pageSize ?? 10
-    const records = sorted.slice(
-      (pageNumber - 1) * pageSize,
-      pageNumber * pageSize,
-    )
+    const records = sorted.slice((pageNumber - 1) * pageSize, pageNumber * pageSize)
 
     return { records, total }
   },

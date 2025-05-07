@@ -7,9 +7,7 @@ function isNetworkUrl(url?: string) {
   if (!url) return false
 
   // 'asset' 和 'tauri' 是本地资源, 自定义协议
-  return (
-    url.startsWith('http') && !url.includes('asset') && !url.includes('tauri')
-  )
+  return url.startsWith('http') && !url.includes('asset') && !url.includes('tauri')
 }
 
 function isVailImageUrl(url?: string) {
@@ -39,10 +37,7 @@ export default function ImageView(props: UImageProps) {
     staleTime: 60 * 1000,
     queryKey: ['image', 'preview', props.src],
     queryFn: async () => {
-      const url =
-        !!props.src && isNetworkUrl(props.src)
-          ? await getPreviewImageUrl(props.src)
-          : props.src
+      const url = !!props.src && isNetworkUrl(props.src) ? await getPreviewImageUrl(props.src) : props.src
 
       if (await isVailImageUrl(url)) {
         return url
@@ -58,10 +53,7 @@ export default function ImageView(props: UImageProps) {
   return (
     <>
       <div
-        className={cls(
-          'min-h-8 overflow-hidden bg-slate-100 bg-center bg-no-repeat transition-all',
-          props.className,
-        )}
+        className={cls('min-h-8 overflow-hidden bg-slate-100 bg-center bg-no-repeat transition-all', props.className)}
         style={props.style}
         onClick={props.onClick}
       >

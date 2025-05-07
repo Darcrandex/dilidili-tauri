@@ -81,28 +81,16 @@ export default function TaskItem(props: TaskItemProps) {
   })
 
   const status = statusOptions.find((o) => o.value === props.task.status)
-  const isPending =
-    props.task.status === ETaskStatus.Downloading ||
-    props.task.status === ETaskStatus.Merging
+  const isPending = props.task.status === ETaskStatus.Downloading || props.task.status === ETaskStatus.Merging
 
   const qualityLabel = useMemo(() => {
-    if (
-      !Array.isArray(playurlData?.support_formats) ||
-      !props.task.params.quality
-    )
-      return null
-    return playurlData.support_formats.find(
-      (item) => item.quality === props.task.params.quality,
-    )?.new_description
+    if (!Array.isArray(playurlData?.support_formats) || !props.task.params.quality) return null
+    return playurlData.support_formats.find((item) => item.quality === props.task.params.quality)?.new_description
   }, [playurlData, props.task.params.quality])
 
   const onOpenDir = async () => {
     if (rootDirPath) {
-      const dirPath = await join(
-        rootDirPath,
-        props.task.params.mid,
-        props.task.params.bvid,
-      )
+      const dirPath = await join(rootDirPath, props.task.params.mid, props.task.params.bvid)
 
       const isValid = await exists(dirPath)
       if (isValid) {
@@ -116,12 +104,7 @@ export default function TaskItem(props: TaskItemProps) {
   const onOpenVideo = async () => {
     if (rootDirPath) {
       const videoFileName = getOutputFileName(props.task.params)
-      const videoPath = await join(
-        rootDirPath,
-        props.task.params.mid,
-        props.task.params.bvid,
-        `${videoFileName}.mp4`,
-      )
+      const videoPath = await join(rootDirPath, props.task.params.mid, props.task.params.bvid, `${videoFileName}.mp4`)
 
       const isValid = await exists(videoPath)
       if (isValid) {
@@ -155,10 +138,7 @@ export default function TaskItem(props: TaskItemProps) {
     const matchedPageInfo = playurlData
     const videos = sortBy(matchedPageInfo?.dash?.video || [], ['bandwidth'])
 
-    const matchedVideo = getSimilarQualityVideo(
-      props.task.params.quality,
-      videos,
-    )
+    const matchedVideo = getSimilarQualityVideo(props.task.params.quality, videos)
     const videoDownloadUrl = matchedVideo?.baseUrl || ''
 
     const audios = sortBy(matchedPageInfo?.dash?.audio || [], ['bandwidth'])
@@ -171,16 +151,11 @@ export default function TaskItem(props: TaskItemProps) {
   return (
     <>
       <div className='group flex space-x-4 rounded-md bg-slate-50 transition-all hover:opacity-75'>
-        <ImagView
-          src={props.task.params.videoInfo.pic}
-          className='block h-24 w-40 rounded-l-md object-cover'
-        />
+        <ImagView src={props.task.params.videoInfo.pic} className='block h-24 w-40 rounded-l-md object-cover' />
 
         <article className='flex flex-1 flex-col justify-between py-2'>
           <div className='truncate'>
-            <p className='truncate font-bold'>
-              {props.task.params.videoInfo.title}
-            </p>
+            <p className='truncate font-bold'>{props.task.params.videoInfo.title}</p>
             <p className='mt-0 text-sm text-gray-500'>{bvid}</p>
           </div>
 
@@ -239,12 +214,7 @@ export default function TaskItem(props: TaskItemProps) {
                 ],
               }}
             >
-              <Button
-                size='large'
-                shape='circle'
-                type='text'
-                icon={<MoreOutlined className='!text-primary' />}
-              />
+              <Button size='large' shape='circle' type='text' icon={<MoreOutlined className='!text-primary' />} />
             </Dropdown>
           </Space>
         </div>

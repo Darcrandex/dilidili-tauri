@@ -14,24 +14,17 @@ export default function OwnerListItem(props: { data: AppScope.UserItem }) {
       <div
         className={cls(
           'group/owner m-2 flex cursor-pointer items-center rounded-md p-2 transition-all select-none',
-          isActive
-            ? 'text-primary !bg-slate-100'
-            : '!text-gray-500 hover:!bg-slate-50',
+          isActive ? 'text-primary !bg-slate-100' : '!text-gray-500 hover:!bg-slate-50',
         )}
         onClick={() => setQuery({ mid: props.data.mid })}
       >
         {isAll ? (
           <Avatar className='h-8 w-8 flex-shrink-0'>All</Avatar>
         ) : (
-          <ImageView
-            src={props.data.avatar}
-            className='h-8 w-8 flex-shrink-0 rounded-full bg-gray-100'
-          />
+          <ImageView src={props.data.avatar} className='h-8 w-8 flex-shrink-0 rounded-full bg-gray-100' />
         )}
 
-        <span className='group-hover/owner:text-primary ml-2 truncate text-sm'>
-          {props.data.name}
-        </span>
+        <span className='group-hover/owner:text-primary ml-2 truncate text-sm'>{props.data.name}</span>
       </div>
     </>
   )

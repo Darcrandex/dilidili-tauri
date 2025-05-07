@@ -5,9 +5,7 @@ import { uuid } from '@/utils/common'
 export const userService = {
   // 获取二维码
   qrcode: () =>
-    http.get<{ url: string; qrcode_key: string }>(
-      'https://passport.bilibili.com/x/passport-login/web/qrcode/generate',
-    ),
+    http.get<{ url: string; qrcode_key: string }>('https://passport.bilibili.com/x/passport-login/web/qrcode/generate'),
 
   // 检查二维码状态
   qrcodeCheck: (key: string) =>
@@ -17,17 +15,14 @@ export const userService = {
     ),
 
   // 获取当前登录用户信息
-  profile: () =>
-    http.get<Bilibili.UserProfileShchema>(
-      'https://api.bilibili.com/x/web-interface/nav',
-    ),
+  profile: () => http.get<Bilibili.UserProfileShchema>('https://api.bilibili.com/x/web-interface/nav'),
 
   // 获取UP主信息
   getById(mid: string | number) {
-    return http.get<Bilibili.UPCardInfo>(
-      'https://api.bilibili.com/x/web-interface/card',
-      { mid: mid.toString(), photo: 'true' },
-    )
+    return http.get<Bilibili.UPCardInfo>('https://api.bilibili.com/x/web-interface/card', {
+      mid: mid.toString(),
+      photo: 'true',
+    })
   },
 
   async create(data: Omit<AppScope.UserItem, 'id'>) {

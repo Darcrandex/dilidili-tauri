@@ -1,8 +1,5 @@
 import GlobalAntdMessage from '@/components/GlobalAntdMessage'
-import {
-  legacyLogicalPropertiesTransformer,
-  StyleProvider,
-} from '@ant-design/cssinjs'
+import { legacyLogicalPropertiesTransformer, StyleProvider } from '@ant-design/cssinjs'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { App as AntdApp, ConfigProvider } from 'antd'
 import zhCN from 'antd/locale/zh_CN'
@@ -45,15 +42,10 @@ export default function App() {
         <ConfigProvider
           locale={zhCN}
           theme={{
-            token: themeColor
-              ? { colorPrimary: themeColor, colorLink: themeColor }
-              : undefined,
+            token: themeColor ? { colorPrimary: themeColor, colorLink: themeColor } : undefined,
           }}
         >
-          <StyleProvider
-            hashPriority='high'
-            transformers={[legacyLogicalPropertiesTransformer]}
-          >
+          <StyleProvider hashPriority='high' transformers={[legacyLogicalPropertiesTransformer]}>
             <AntdApp>
               <GlobalAntdMessage />
               <RouterProvider router={router} />

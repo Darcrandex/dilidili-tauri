@@ -53,12 +53,7 @@ export default function SpaceMain() {
             />
           </div>
 
-          <Button
-            type='primary'
-            icon={<ReloadOutlined />}
-            loading={isPending}
-            onClick={() => refetch()}
-          />
+          <Button type='primary' icon={<ReloadOutlined />} loading={isPending} onClick={() => refetch()} />
         </header>
 
         <Row gutter={[22, 22]}>
