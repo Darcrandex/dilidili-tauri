@@ -103,6 +103,11 @@ pnpm dev
 }
 ```
 
+### 生成图标
+
+1. 在项目根目录（package.json 所在目录）添加 `app-icon.png` 图标文件. 大小为 512x512
+2. 执行 `pnpm tauri icon` 生成所有平台所需的图标文件
+
 ## debug 调试
 
 打包时添加`--debug`参数可以在打包后的应用中使用调试工具
