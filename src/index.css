@@ -3,12 +3,3 @@
 @theme {
   --color-primary: #fb7299;
 }
-
-@plugin 'tailwind-scrollbar' {
-  nocompatible: true;
-  preferredstrategy: 'pseudoelements';
-}
-
-.g-custom-scrollbar {
-  @apply scrollbar scrollbar-w-1 scrollbar-thumb-rounded-full scrollbar-thumb-transparent hover:scrollbar-thumb-gray-500;
-}

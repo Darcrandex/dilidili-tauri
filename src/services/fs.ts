@@ -1,6 +1,6 @@
 import { join } from '@tauri-apps/api/path'
 import { exists, readDir, readTextFile } from '@tauri-apps/plugin-fs'
-import * as R from 'ramda'
+import { isNil } from 'lodash-es'
 
 const midRegex = /^\d{3,}$/ // UP 主 mid 规则
 const bvRegex = /^BV[0-9a-zA-Z]{3,}$/ // BV 视频 id 规则
@@ -9,19 +9,19 @@ const bvRegex = /^BV[0-9a-zA-Z]{3,}$/ // BV 视频 id 规则
  * 递归获取文件夹下所有的文件和子文件夹
  * @param path 文件夹路径
  */
-async function readDirTree(path: string): Promise<AppScope.FileEntry[]> {
+async function readDirTree(path: string): Promise<any[]> {
   try {
     // 调用 readDir 函数读取指定路径下的所有条目
     const entries = await readDir(path)
     // 用于存储最终的文件条目数组
-    const fileEntries: AppScope.FileEntry[] = []
+    const fileEntries: any[] = []
 
     // 遍历每个条目
     for (const entry of entries) {
       // 创建一个新的 FileEntry 对象
 
       const entryPath = await join(path, entry.name)
-      const fileEntry: AppScope.FileEntry = {
+      const fileEntry: any = {
         name: entry.name,
         path: entryPath,
         isDirectory: entry.isDirectory,
@@ -56,26 +56,24 @@ async function checkFilesExist(files: string[]): Promise<boolean> {
 }
 
 // 处理单个 UP 文件夹的函数
-async function processUpFolder(v: AppScope.FileEntry): Promise<{
-  upInfo: AppScope.UserBaseInfoShema
-  bvItems: AppScope.BVItemFromFile[]
+async function processUpFolder(v: any): Promise<{
+  upInfo: any
+  bvItems: any[]
 }> {
   const mid = v.name || ''
-  const upInfo: AppScope.UserBaseInfoShema = { mid, path: v.path }
-  const bvItems: AppScope.BVItemFromFile[] = []
+  const upInfo: any = { mid, path: v.path }
+  const bvItems: any[] = []
 
-  if (R.is(Array, v.children)) {
-    const validBvPromises = v.children.map(async (c: AppScope.FileEntry) => {
-      if (R.isNotNil(c.name) && bvRegex.test(c.name)) {
+  if (Array.isArray(v.children)) {
+    const validBvPromises = v.children.map(async (c: any) => {
+      if (!isNil(c.name) && bvRegex.test(c.name)) {
         const bvid = c.name
         const infoPath = await join(c.path, `${bvid}-info.json`)
         const coverPath = await join(c.path, `${bvid}-cover.jpg`)
 
         if (await checkFilesExist([infoPath, coverPath])) {
           try {
-            const videoInfo: AppScope.VideoInfoSchema = JSON.parse(
-              await readTextFile(infoPath),
-            )
+            const videoInfo: any = JSON.parse(await readTextFile(infoPath))
             return { mid, bvid, videoInfo, path: c.path, children: c.children }
           } catch (error) {
             console.log('bv 文件夹中没有视频信息', error)
@@ -87,11 +85,7 @@ async function processUpFolder(v: AppScope.FileEntry): Promise<{
     })
 
     const validBvResults = await Promise.all(validBvPromises)
-    bvItems.push(
-      ...(validBvResults.filter(
-        (item) => item !== null,
-      ) as AppScope.BVItemFromFile[]),
-    )
+    bvItems.push(...(validBvResults.filter((item) => item !== null) as any[]))
   }
 
   return { upInfo, bvItems }
@@ -102,8 +96,8 @@ async function processUpFolder(v: AppScope.FileEntry): Promise<{
  * @param rootDirPath
  */
 async function getAllBVDataAsync(rootDirPath: string): Promise<{
-  ups: Array<AppScope.UserBaseInfoShema>
-  bvs: Array<AppScope.BVItemFromFile>
+  ups: Array<any>
+  bvs: Array<any>
 }> {
   if (!rootDirPath) return { ups: [], bvs: [] }
 
@@ -112,9 +106,9 @@ async function getAllBVDataAsync(rootDirPath: string): Promise<{
     const tree = await readDirTree(rootDirPath)
 
     // UP ID 列表
-    const upBaseInfoList: Array<AppScope.UserBaseInfoShema> = []
+    const upBaseInfoList: Array<any> = []
     // 所有的 BV 列表
-    const bvList: AppScope.BVItemFromFile[] = []
+    const bvList: any[] = []
 
     const matchedTree = tree.filter((v) => v.name && midRegex.test(v.name))
     const upFolderPromises = matchedTree.map(processUpFolder)
@@ -125,7 +119,7 @@ async function getAllBVDataAsync(rootDirPath: string): Promise<{
       bvList.push(...result.bvItems)
     })
 
-    const sortDesc = (list: AppScope.BVItemFromFile[]) => {
+    const sortDesc = (list: any[]) => {
       return list.sort((a, b) => {
         return b.videoInfo.pubdate - a.videoInfo.pubdate
       })

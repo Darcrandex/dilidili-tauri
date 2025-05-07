@@ -38,8 +38,16 @@ export default function LoginModal(props: LoginModalProps) {
           defaultActiveKey='1'
           centered
           items={[
-            { key: '1', label: '扫描登录', children: <LoginWithCode onSuccess={onSuccess} /> },
-            { key: '2', label: '手动登录', children: <LoginWithSession onSuccess={onSuccess} /> }
+            {
+              key: '1',
+              label: '扫描登录',
+              children: <LoginWithCode onSuccess={onSuccess} />,
+            },
+            {
+              key: '2',
+              label: '手动登录',
+              children: <LoginWithSession onSuccess={onSuccess} />,
+            },
           ]}
         />
       </Modal>

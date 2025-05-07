@@ -1,30 +1,31 @@
-import { Navigate, RouteObject } from 'react-router'
-import {
-  AboutPage,
-  HomeLayout,
-  MinePage,
-  NotFound,
-  RootLayout,
-  SearchPage,
-  SettingsPage,
-  SpaceLayout,
-  TasksPage,
-} from './lazy-load'
+import { lazy } from 'react'
+import { Navigate, type RouteObject } from 'react-router'
+
+const AppLayout = lazy(() => import('@/app/layout'))
+const HomeLayout = lazy(() => import('@/app/home/layout'))
+const SearchPage = lazy(() => import('@/app/home/search/page'))
+const TaskPage = lazy(() => import('@/app/home/task/page'))
+const SpacePage = lazy(() => import('@/app/home/space/page'))
+
+const MinePage = lazy(() => import('@/app/mine/page'))
+const SettingsPage = lazy(() => import('@/app/settings/page'))
+const AboutPage = lazy(() => import('@/app/about/page'))
+const NotFound = lazy(() => import('@/app/not-found/page'))
 
 export const routes: RouteObject[] = [
   {
     path: '/',
-    element: <RootLayout />,
+    element: <AppLayout />,
     children: [
-      { index: true, element: <Navigate to='home' /> },
+      { index: true, element: <Navigate replace to='home' /> },
       {
         path: 'home',
         element: <HomeLayout />,
         children: [
-          { index: true, element: <Navigate to='search' /> },
+          { index: true, element: <Navigate replace to='search' /> },
           { path: 'search', element: <SearchPage /> },
-          { path: 'tasks', element: <TasksPage /> },
-          { path: 'space', element: <SpaceLayout /> },
+          { path: 'task', element: <TaskPage /> },
+          { path: 'space', element: <SpacePage /> },
         ],
       },
 
@@ -34,8 +35,5 @@ export const routes: RouteObject[] = [
     ],
   },
 
-  {
-    path: '*',
-    element: <NotFound />,
-  },
+  { path: '*', element: <NotFound /> },
 ]

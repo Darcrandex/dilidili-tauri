@@ -6,11 +6,7 @@ import { Command } from '@tauri-apps/plugin-shell'
  * @param audioFilePath 音频文件的路径
  * @param outputFilePath 输出文件的路径
  */
-export async function mixingVideo(
-  videoFilePath: string,
-  audioFilePath: string,
-  outputFilePath: string,
-) {
+export async function mixingVideo(videoFilePath: string, audioFilePath: string, outputFilePath: string) {
   const command = Command.sidecar('binaries/ffmpeg', [
     '-i',
     videoFilePath,
@@ -26,11 +22,7 @@ export async function mixingVideo(
   const output = await command.execute()
 
   if (output.code !== 0) {
-    console.error(
-      '===>合并失败',
-      { videoFilePath, audioFilePath, outputFilePath },
-      output.stderr,
-    )
+    console.error('===>合并失败', { videoFilePath, audioFilePath, outputFilePath }, output.stderr)
     throw new Error(output.stderr)
   }
 }

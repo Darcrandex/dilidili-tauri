@@ -4,24 +4,24 @@
  * @author darcrand
  */
 
+import { downloadBV } from '@/core'
+import { useRootDirPath } from '@/hooks/useRootDirPath'
 import { mediaService } from '@/services/media'
 import { taskService } from '@/services/task'
-import { useDownloadQueue } from '@/stores/download-queue'
 import { useSession } from '@/stores/session'
 import { cls } from '@/utils/cls'
-import { sleep, taskOneByOne } from '@/utils/common'
 import { getSimilarQualityVideo } from '@/utils/get-similar-quality-video'
-import { useMutation, useQueries, useQuery } from '@tanstack/react-query'
+import { useMutation, useQueries, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useSelections } from 'ahooks'
 import { App, Button, Checkbox, Flex, Modal, Select } from 'antd'
-import * as R from 'ramda'
+import { first, sortBy } from 'lodash-es'
 import { ReactNode, useMemo, useState } from 'react'
 import { pickVideoInfo } from './utils'
 
 const MAX_TASK_COUNT = 100
 
 export type DownloadModalProps = {
-  videoInfo: AppScope.VideoInfoSchema
+  videoInfo: Bilibili.VideoInfoSchema
   defaultPage?: number
   trigger?: (onOpen: () => void) => ReactNode
   onOk?: () => void
@@ -29,8 +29,9 @@ export type DownloadModalProps = {
 
 export default function DownloadModal(props: DownloadModalProps) {
   const [session] = useSession()
-  const { addAutoRun } = useDownloadQueue()
   const { modal } = App.useApp()
+  const rootDirPath = useRootDirPath()
+  const queryClient = useQueryClient()
 
   const { data: taskList } = useQuery({
     queryKey: ['tasks'],
@@ -41,8 +42,7 @@ export default function DownloadModal(props: DownloadModalProps) {
   const { data: playurlData } = useQuery({
     queryKey: ['video', 'playurl', props.videoInfo.bvid, props.videoInfo.cid],
     enabled: !!props.videoInfo.bvid,
-    queryFn: () =>
-      mediaService.playurl(props.videoInfo.bvid, props.videoInfo.cid),
+    queryFn: () => mediaService.playurl(props.videoInfo.bvid, props.videoInfo.cid),
   })
 
   // 所有视频分p的数据
@@ -51,7 +51,7 @@ export default function DownloadModal(props: DownloadModalProps) {
       queryKey: ['video', 'playurl', props.videoInfo.bvid, v.cid],
       enabled: !!props.videoInfo.bvid && !!v.cid,
       queryFn: () => mediaService.playurl(props.videoInfo.bvid, v.cid),
-      select: (res: AppScope.PageInfoSchema) => {
+      select: (res: Bilibili.PageInfoSchema) => {
         return { page: v.page, info: res }
       },
       // 下载地址有效时间 180 秒
@@ -109,7 +109,7 @@ export default function DownloadModal(props: DownloadModalProps) {
 
   const { mutateAsync: onOk, isPending } = useMutation({
     mutationFn: async () => {
-      if (!quality || selectedPages.length === 0) return
+      if (!quality || selectedPages.length === 0 || !rootDirPath) return
 
       // 检查任务是否达到上限
       const nextTaskCount = selectedPages.length + (taskList?.length || 0)
@@ -121,57 +121,42 @@ export default function DownloadModal(props: DownloadModalProps) {
         return
       }
 
-      const taskParamsArr = selectedPages
-        .map((p) => {
-          // 根据分p序号找到对应的视频信息
-          const matchedPageInfo = pageInfoResArr.find(
-            (res) => res?.data?.page === p,
-          )?.data?.info
+      const taskParamsArr = selectedPages.map((p) => {
+        // 根据分p序号找到对应的视频信息
+        const matchedPageInfo = pageInfoResArr.find((res) => res?.data?.page === p)?.data?.info
 
-          // id 相同时，bandwidth 不同
-          // 先根据 bandwidth 降序
-          // 保证下载的是高码率的
-          const videos = R.sort(
-            (a, b) => b.bandwidth - a.bandwidth,
-            matchedPageInfo?.dash?.video || [],
-          )
-          const matchedVideo = getSimilarQualityVideo(quality, videos)
-          const videoDownloadUrl = matchedVideo?.baseUrl || ''
+        // id 相同时，bandwidth 不同
+        // 先根据 bandwidth 降序
+        // 保证下载的是高码率的
+        const videos = sortBy(matchedPageInfo?.dash?.video || [], ['bandwidth'])
+        const matchedVideo = getSimilarQualityVideo(quality, videos)
+        const videoDownloadUrl = matchedVideo?.baseUrl || ''
 
-          const audios = R.sort(
-            (a, b) => b.bandwidth - a.bandwidth,
-            matchedPageInfo?.dash?.audio || [],
-          )
-          const audioDownloadUrl = R.head(audios)?.baseUrl || ''
+        const audios = sortBy(matchedPageInfo?.dash?.audio || [], ['bandwidth'])
+        const audioDownloadUrl = first(audios)?.baseUrl || ''
 
-          const params: AppScope.DownloadBVParams = {
-            mid: props.videoInfo.owner.mid.toString(),
-            bvid: props.videoInfo.bvid,
-            page: p,
-            quality: matchedVideo?.id || quality,
-            qualityName:
-              qualityOptions.find((v) => v.value === matchedVideo?.id)?.label ||
-              '',
-            videoDownloadUrl,
-            audioDownloadUrl,
-            coverImageUrl: props.videoInfo.pic,
-            videoInfo: pickVideoInfo(props.videoInfo),
-          }
-
-          return params
-        })
-        .filter((v) => Boolean(v.videoDownloadUrl && v.audioDownloadUrl))
-
-      const tasks = taskParamsArr.map((p, i, arr) => {
-        return async () => {
-          const id = await taskService.create(p)
-          addAutoRun(id, p)
-          // 多任务添加延迟
-          await sleep(i === arr.length - 1 ? 0 : 500)
+        const params: AppScope.DownloadBVParams = {
+          mid: props.videoInfo.owner.mid.toString(),
+          bvid: props.videoInfo.bvid,
+          page: p,
+          quality,
+          qualityName: qualityOptions.find((v) => v.value === matchedVideo?.id)?.label || '',
+          videoDownloadUrl,
+          audioDownloadUrl,
+          coverImageUrl: props.videoInfo.pic,
+          videoInfo: pickVideoInfo(props.videoInfo),
         }
+
+        return params
       })
 
-      await taskOneByOne(tasks)
+      taskParamsArr
+        .filter((v) => Boolean(v.videoDownloadUrl && v.audioDownloadUrl))
+        .forEach((v) => {
+          downloadBV(v, rootDirPath).then(() => {
+            queryClient.invalidateQueries({ queryKey: ['video'] })
+          })
+        })
     },
 
     onSuccess() {
@@ -182,11 +167,7 @@ export default function DownloadModal(props: DownloadModalProps) {
 
   return (
     <>
-      {typeof props.trigger === 'function' ? (
-        props.trigger(beforeOpen)
-      ) : (
-        <Button onClick={beforeOpen}>下载</Button>
-      )}
+      {typeof props.trigger === 'function' ? props.trigger(beforeOpen) : <Button onClick={beforeOpen}>下载</Button>}
 
       <Modal width='420px' open={open} onCancel={onCancel} footer={null}>
         <section className='space-y-4'>
@@ -201,11 +182,7 @@ export default function DownloadModal(props: DownloadModalProps) {
               onChange={setQuality}
             />
 
-            <Checkbox
-              checked={allSelected}
-              onClick={toggleAll}
-              indeterminate={partiallySelected}
-            >
+            <Checkbox checked={allSelected} onClick={toggleAll} indeterminate={partiallySelected}>
               全选
             </Checkbox>
           </div>

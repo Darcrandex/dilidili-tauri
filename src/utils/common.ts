@@ -1,7 +1,12 @@
 import { platform } from '@tauri-apps/plugin-os'
 import { customAlphabet } from 'nanoid'
 
-export async function sleep(ms: number = 100) {
+/**
+ * 异步等待一段时间
+ * @param ms - 毫秒
+ * @returns
+ */
+export async function sleep(ms: number) {
   return new Promise<void>((resolve) => setTimeout(resolve, ms))
 }
 
@@ -43,9 +48,7 @@ export function formatSeconds(seconds: number): string {
   const formattedMinutes = minutes.toString().padStart(2, '0')
   const formattedSeconds = remainingSeconds.toString().padStart(2, '0')
 
-  return [formattedHours, formattedMinutes, formattedSeconds]
-    .filter(Boolean)
-    .join(':')
+  return [formattedHours, formattedMinutes, formattedSeconds].filter(Boolean).join(':')
 }
 
 /**
@@ -64,7 +67,7 @@ export function isValidFileName(filename = '') {
     illegalChars = /[\\/*?:"<>|]/
   } else {
     // Unix/Linux 系统下非法字符
-    illegalChars = /[\/]/
+    illegalChars = /[/]/
   }
 
   return !illegalChars.test(filename)
@@ -83,7 +86,7 @@ export function removeInvalidChars(filename = '') {
     illegalChars = /[\\/*?:"<>|]/
   } else {
     // Unix/Linux 系统下非法字符
-    illegalChars = /[\/]/
+    illegalChars = /[/]/
   }
 
   return filename.replace(illegalChars, '')

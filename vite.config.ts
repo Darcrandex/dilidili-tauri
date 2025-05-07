@@ -35,10 +35,14 @@ export default defineConfig(({ mode }) => {
     build: {
       rollupOptions: {
         output: {
+          chunkFileNames: 'static/js/[name]-[hash].js',
+          entryFileNames: 'static/js/[name]-[hash].js',
+          assetFileNames: 'static/assets/[name]-[hash].[ext]',
+
           manualChunks: {
-            vendor: ['react', 'react-dom'],
+            react: ['react', 'react-dom', 'react-router'],
             antd: ['antd'],
-            antdIcons: ['@ant-design/icons'],
+            icons: ['@ant-design/icons'],
           },
         },
       },

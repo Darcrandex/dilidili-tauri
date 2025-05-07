@@ -5,12 +5,7 @@
  */
 
 import { cls } from '@/utils/cls'
-import {
-  HomeOutlined,
-  InfoCircleOutlined,
-  SettingOutlined,
-  SmileOutlined,
-} from '@ant-design/icons'
+import { HomeOutlined, InfoCircleOutlined, SettingOutlined, SmileOutlined } from '@ant-design/icons'
 import { NavLink } from 'react-router'
 
 const menus = [
@@ -33,9 +28,7 @@ export default function AsideMenus() {
               className={({ isActive }) =>
                 cls(
                   'flex flex-col items-center justify-center px-6 py-4 text-2xl transition-all',
-                  isActive
-                    ? '!text-primary'
-                    : 'hover:!text-primary/50 !text-gray-500',
+                  isActive ? '!text-primary' : 'hover:!text-primary/50 !text-gray-500',
                 )
               }
             >

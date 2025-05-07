@@ -1,6 +1,6 @@
 // 视频列表页面,左侧侧边栏的宽度
 
-import { EStorageKey } from '@/constants/common'
+import { EStorageKey } from '@/const/enums'
 import { useAtom } from 'jotai'
 import { atomWithStorage } from 'jotai/utils'
 

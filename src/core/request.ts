@@ -1,13 +1,11 @@
 // tauri-http 与 bilibili-api 的请求封装
 
-import { ECommon, EStorageKey } from '@/constants/common'
+import { ECommon, EStorageKey } from '@/const/enums'
 import { fetch } from '@tauri-apps/plugin-http'
 
 // 获取跨域请求的 headers
 export function getCORSHeaders() {
-  const session =
-    localStorage.getItem(EStorageKey.SessionKey) ||
-    import.meta.env.VITE_APP_SESSION
+  const session = localStorage.getItem(EStorageKey.SessionKey) || import.meta.env.VITE_APP_SESSION
 
   // Origin 置空可以达到允许跨域的效果
   // User-Agent 也是必传的, 直接引用浏览器的 userAgent 即可

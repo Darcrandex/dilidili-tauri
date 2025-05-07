@@ -2,7 +2,7 @@
 // 对于多 P 视频，可能存在其他分 P 清晰度匹配不到所选清晰度的情况
 // 就需要找到最相近清晰度
 
-type VideoItem = AppScope.PageInfoSchema['dash']['video'][number]
+type VideoItem = Bilibili.PageInfoSchema['dash']['video'][number]
 
 /**
  * 获取清晰度最相近的视频
@@ -12,7 +12,7 @@ type VideoItem = AppScope.PageInfoSchema['dash']['video'][number]
  */
 export function getSimilarQualityVideo(
   quality: number,
-  videos?: AppScope.PageInfoSchema['dash']['video'],
+  videos?: Bilibili.PageInfoSchema['dash']['video'],
 ): VideoItem | undefined {
   if (!Array.isArray(videos) || videos.length === 0) return undefined
 

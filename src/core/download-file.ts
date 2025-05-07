@@ -1,6 +1,6 @@
 // 从 bilibili 服务器下载文件
 
-import { ECommon, EStorageKey } from '@/constants/common'
+import { ECommon, EStorageKey } from '@/const/enums'
 import { getPathSpliter } from '@/utils/common'
 import { exists, mkdir, remove } from '@tauri-apps/plugin-fs'
 import { download as tauriDownload } from '@tauri-apps/plugin-upload'
@@ -12,9 +12,7 @@ export async function downloadFile(cfg: {
 }): Promise<void> {
   const headers = new Map()
 
-  const session =
-    localStorage.getItem(EStorageKey.SessionKey) ||
-    import.meta.env.VITE_APP_SESSION
+  const session = localStorage.getItem(EStorageKey.SessionKey) || import.meta.env.VITE_APP_SESSION
 
   // 3 个缺一不可
   headers.set('referer', ECommon.Referer)

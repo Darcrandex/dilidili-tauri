@@ -1,15 +1,19 @@
-import { EIndexDBKey } from '@/constants/common'
+import { EIndexDB } from '@/const/enums'
 import Dexie, { Table } from 'dexie'
 
-export class MySubClassedDexie extends Dexie {
-  tasks!: Table<AppScope.DownloadTask, string>
+export class MyDexie extends Dexie {
+  users!: Table<AppScope.UserItem, string>
+  tasks!: Table<AppScope.TaskItem, string>
+  videos!: Table<AppScope.VideoItem, string>
 
   constructor() {
-    super(EIndexDBKey.Tasks)
-    this.version(1).stores({
-      tasks: 'id, createdAt, status, params',
+    super(EIndexDB.Name)
+    this.version(EIndexDB.Version).stores({
+      tasks: 'id, title, createdAt, updatedAt',
+      users: 'id, mid, name, avatar, createdAt, updatedAt',
+      videos: 'id, mid, ownerName, bvid, page, quality, qualityName, title,  duration, pubdate, createdAt, updatedAt',
     })
   }
 }
 
-export const db = new MySubClassedDexie()
+export const db = new MyDexie()

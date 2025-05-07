@@ -1,11 +1,11 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
   "productName": "dilidili",
-  "version": "0.2.5",
+  "version": "0.3.0",
   "identifier": "com.dilidili.app",
   "build": {
     "frontendDist": "../dist",
-    "devUrl": "http://localhost:3000",
+    "devUrl": "http://localhost:3090",
     "beforeDevCommand": "pnpm prebuild && pnpm dev",
     "beforeBuildCommand": "pnpm prebuild && pnpm build"
   },
@@ -28,16 +28,14 @@
       },
       "assetProtocol": {
         "enable": true,
-        "scope": [
-          "**/*"
-        ]
+        "scope": ["**/*"]
       }
     }
   },
+  "plugins": { "shell": { "open": "*" } },
+
   "bundle": {
-    "externalBin": [
-      "binaries/ffmpeg"
-    ],
+    "externalBin": ["binaries/ffmpeg"],
     "active": true,
     "targets": "all",
     "icon": [

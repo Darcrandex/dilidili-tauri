@@ -4,13 +4,12 @@
  * @author darcrand
  */
 
-import { ETaskStatus } from '@/constants/common'
+import ImagView from '@/components/ImageView'
+import { ETaskStatus } from '@/const/enums'
 import { getOutputFileName } from '@/core'
 import { useRootDirPath } from '@/hooks/useRootDirPath'
 import { mediaService } from '@/services/media'
 import { taskService } from '@/services/task'
-import { useDownloadQueue } from '@/stores/download-queue'
-import ImagView from '@/ui/ImageView'
 import { getSimilarQualityVideo } from '@/utils/get-similar-quality-video'
 import {
   CheckCircleOutlined,
@@ -23,12 +22,14 @@ import {
   PlayCircleOutlined,
   SyncOutlined,
 } from '@ant-design/icons'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { join } from '@tauri-apps/api/path'
+import { exists } from '@tauri-apps/plugin-fs'
 import { open as openShell } from '@tauri-apps/plugin-shell'
 import { Button, Dropdown, Space, Tag } from 'antd'
-import * as R from 'ramda'
+import { first, sortBy } from 'lodash-es'
 import { useMemo } from 'react'
+import { message, modal } from './GlobalAntdMessage'
 
 const statusOptions = [
   {
@@ -64,7 +65,7 @@ const statusOptions = [
 ]
 
 export type TaskItemProps = {
-  task: AppScope.DownloadTask
+  task: AppScope.TaskItem
 }
 
 export default function TaskItem(props: TaskItemProps) {
@@ -80,94 +81,81 @@ export default function TaskItem(props: TaskItemProps) {
   })
 
   const status = statusOptions.find((o) => o.value === props.task.status)
-  const isPending =
-    props.task.status === ETaskStatus.Downloading ||
-    props.task.status === ETaskStatus.Merging
+  const isPending = props.task.status === ETaskStatus.Downloading || props.task.status === ETaskStatus.Merging
 
   const qualityLabel = useMemo(() => {
-    if (
-      !Array.isArray(playurlData?.support_formats) ||
-      !props.task.params.quality
-    )
-      return null
-    return playurlData.support_formats.find(
-      (item) => item.quality === props.task.params.quality,
-    )?.new_description
+    if (!Array.isArray(playurlData?.support_formats) || !props.task.params.quality) return null
+    return playurlData.support_formats.find((item) => item.quality === props.task.params.quality)?.new_description
   }, [playurlData, props.task.params.quality])
 
   const onOpenDir = async () => {
     if (rootDirPath) {
-      const dirPath = await join(
-        rootDirPath,
-        props.task.params.mid,
-        props.task.params.bvid,
-      )
-      await openShell(dirPath)
+      const dirPath = await join(rootDirPath, props.task.params.mid, props.task.params.bvid)
+
+      const isValid = await exists(dirPath)
+      if (isValid) {
+        await openShell(dirPath)
+      } else {
+        message.error('文件夹不存在')
+      }
     }
   }
 
   const onOpenVideo = async () => {
     if (rootDirPath) {
       const videoFileName = getOutputFileName(props.task.params)
-      const videoPath = await join(
-        rootDirPath,
-        props.task.params.mid,
-        props.task.params.bvid,
-        `${videoFileName}.mp4`,
-      )
+      const videoPath = await join(rootDirPath, props.task.params.mid, props.task.params.bvid, `${videoFileName}.mp4`)
 
-      await openShell(videoPath)
+      const isValid = await exists(videoPath)
+      if (isValid) {
+        await openShell(videoPath)
+      } else {
+        message.error('文件不存在')
+      }
     }
   }
 
-  const queryClient = useQueryClient()
-
   const onRemove = async (id: string) => {
-    await taskService.remove(id)
-    queryClient.invalidateQueries({ queryKey: ['tasks'] })
+    modal.confirm({
+      title: '删除任务',
+      content: (
+        <>
+          <p>确认删除任务吗?</p>
+          <p>注意, 删除任务不会同时删除下载的问题</p>
+        </>
+      ),
+      okText: '确认',
+      cancelText: '取消',
+      onOk: async () => {
+        await taskService.remove(id)
+      },
+    })
   }
 
-  const { addAutoRun } = useDownloadQueue()
   const onReDownload = async () => {
     // 下载地址可能会过期
     // 需要重新获取
     const matchedPageInfo = playurlData
-    const videos = R.sort(
-      (a, b) => b.bandwidth - a.bandwidth,
-      matchedPageInfo?.dash?.video || [],
-    )
-    const matchedVideo = getSimilarQualityVideo(
-      props.task.params.quality,
-      videos,
-    )
+    const videos = sortBy(matchedPageInfo?.dash?.video || [], ['bandwidth'])
+
+    const matchedVideo = getSimilarQualityVideo(props.task.params.quality, videos)
     const videoDownloadUrl = matchedVideo?.baseUrl || ''
 
-    const audios = R.sort(
-      (a, b) => b.bandwidth - a.bandwidth,
-      matchedPageInfo?.dash?.audio || [],
-    )
-    const audioDownloadUrl = R.head(audios)?.baseUrl || ''
+    const audios = sortBy(matchedPageInfo?.dash?.audio || [], ['bandwidth'])
+    const audioDownloadUrl = first(audios)?.baseUrl || ''
 
-    const params: AppScope.DownloadBVParams = {
-      ...props.task.params,
-      videoDownloadUrl,
-      audioDownloadUrl,
-    }
-
-    addAutoRun(props.task.id, params)
+    const data = { videoDownloadUrl, audioDownloadUrl }
+    console.log(data)
   }
 
   return (
     <>
       <div className='group flex space-x-4 rounded-md bg-slate-50 transition-all hover:opacity-75'>
-        <ImagView
-          src={props.task.params.videoInfo.pic}
-          className='block h-24 w-40 rounded-l-md object-cover'
-        />
+        <ImagView src={props.task.params.videoInfo.pic} className='block h-24 w-40 rounded-l-md object-cover' />
 
         <article className='flex flex-1 flex-col justify-between py-2'>
-          <div>
-            <p className='font-bold'>{props.task.params.videoInfo.title}</p>
+          <div className='truncate'>
+            <p className='truncate font-bold'>{props.task.params.videoInfo.title}</p>
             <p className='mt-0 text-sm text-gray-500'>{bvid}</p>
           </div>
 
@@ -226,12 +214,7 @@ export default function TaskItem(props: TaskItemProps) {
                 ],
               }}
             >
-              <Button
-                size='large'
-                shape='circle'
-                type='text'
-                icon={<MoreOutlined className='!text-primary' />}
-              />
+              <Button size='large' shape='circle' type='text' icon={<MoreOutlined className='!text-primary' />} />
             </Dropdown>
           </Space>
         </div>

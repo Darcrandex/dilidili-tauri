@@ -1,4 +1,4 @@
-// 保存 bv 视频的信息，避免重复请求
+// 保存 bv 视频的信息
 
 import { writeTextFile } from '@tauri-apps/plugin-fs'
 
