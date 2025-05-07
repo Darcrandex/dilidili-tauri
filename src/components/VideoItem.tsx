@@ -133,9 +133,11 @@ export default function VideoItem(props: { data: AppScope.VideoItem; showUpName?
             onClick={openVideo}
           />
 
-          <span className='absolute top-1 right-1 !m-0 rounded bg-black/25 px-1 text-xs text-white'>
-            {videoInfo.pages.length}P
-          </span>
+          {videoInfo.pages.length > 1 && (
+            <span className='absolute top-1 right-1 !m-0 rounded bg-black/25 px-1 text-xs text-white'>
+              {videoInfo.pages.length}P
+            </span>
+          )}
 
           <span className='absolute right-1 bottom-1 !m-0 rounded bg-black/25 px-1 text-xs text-white'>
             {formatSeconds(videoInfo.duration)}
