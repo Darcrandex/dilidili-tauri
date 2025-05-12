@@ -26,8 +26,15 @@ export function getOutputFileName(params: Pick<AppScope.DownloadBVParams, 'video
   return outputFileName
 }
 
-export async function downloadBV(params: AppScope.DownloadBVParams, rootDirPath: string) {
-  const taskId = uuid()
+/**
+ * 下载 BV 视频并合并
+ * @param params - 下载参数
+ * @param rootDirPath - 根目录路径
+ * @param tid - 任务 ID（重新下载时需要）
+ */
+export async function downloadBV(params: AppScope.DownloadBVParams, rootDirPath: string, tid?: string) {
+  const isUpdate = !!tid
+  const taskId = tid || uuid()
   const ownerDirPath = await join(rootDirPath, params.mid)
   const bvDirPath = await join(ownerDirPath, params.bvid)
 
@@ -44,7 +51,9 @@ export async function downloadBV(params: AppScope.DownloadBVParams, rootDirPath:
   const outputPath = await join(bvDirPath, `${outputFileName}.mp4`)
 
   try {
-    await taskService.create({ id: taskId, status: ETaskStatus.Ready, params })
+    if (!isUpdate) {
+      await taskService.create({ id: taskId, status: ETaskStatus.Ready, params })
+    }
 
     await taskService.update(taskId, { status: ETaskStatus.Downloading })
     await downloadFile({

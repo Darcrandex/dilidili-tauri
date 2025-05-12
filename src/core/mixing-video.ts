@@ -1,3 +1,4 @@
+import { exists, remove } from '@tauri-apps/plugin-fs'
 import { Command } from '@tauri-apps/plugin-shell'
 
 /**
@@ -7,6 +8,11 @@ import { Command } from '@tauri-apps/plugin-shell'
  * @param outputFilePath 输出文件的路径
  */
 export async function mixingVideo(videoFilePath: string, audioFilePath: string, outputFilePath: string) {
+  // 如果文件已存在，先删除
+  if (await exists(outputFilePath)) {
+    await remove(outputFilePath)
+  }
+
   const command = Command.sidecar('binaries/ffmpeg', [
     '-i',
     videoFilePath,

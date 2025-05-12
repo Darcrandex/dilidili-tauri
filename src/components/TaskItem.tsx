@@ -6,7 +6,7 @@
 
 import ImagView from '@/components/ImageView'
 import { ETaskStatus } from '@/const/enums'
-import { getOutputFileName } from '@/core'
+import { downloadBV, getOutputFileName } from '@/core'
 import { useRootDirPath } from '@/hooks/useRootDirPath'
 import { mediaService } from '@/services/media'
 import { taskService } from '@/services/task'
@@ -22,7 +22,7 @@ import {
   PlayCircleOutlined,
   SyncOutlined,
 } from '@ant-design/icons'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { join } from '@tauri-apps/api/path'
 import { exists } from '@tauri-apps/plugin-fs'
 import { open as openShell } from '@tauri-apps/plugin-shell'
@@ -70,6 +70,7 @@ export type TaskItemProps = {
 
 export default function TaskItem(props: TaskItemProps) {
   const rootDirPath = useRootDirPath()
+  const queryClient = useQueryClient()
 
   const { bvid, cid } = props.task.params.videoInfo
   const { data: playurlData } = useQuery({
@@ -133,6 +134,8 @@ export default function TaskItem(props: TaskItemProps) {
   }
 
   const onReDownload = async () => {
+    if (!rootDirPath) return
+
     // 下载地址可能会过期
     // 需要重新获取
     const matchedPageInfo = playurlData
@@ -144,8 +147,15 @@ export default function TaskItem(props: TaskItemProps) {
     const audios = sortBy(matchedPageInfo?.dash?.audio || [], ['bandwidth'])
     const audioDownloadUrl = first(audios)?.baseUrl || ''
 
-    const data = { videoDownloadUrl, audioDownloadUrl }
-    console.log(data)
+    const params: AppScope.DownloadBVParams = {
+      ...props.task.params,
+      videoDownloadUrl,
+      audioDownloadUrl,
+    }
+
+    downloadBV(params, rootDirPath, props.task.id).then(() => {
+      queryClient.invalidateQueries({ queryKey: ['video'] })
+    })
   }
 
   return (
