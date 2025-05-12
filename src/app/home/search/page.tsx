@@ -73,6 +73,7 @@ export default function SearchPage() {
                 enterButton
                 autoFocus
                 allowClear
+                maxLength={100}
                 size='large'
                 value={text}
                 onChange={(e) => setText(e.target.value)}

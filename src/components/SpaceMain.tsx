@@ -40,6 +40,7 @@ export default function SpaceMain() {
         <header className='mx-auto my-8 flex max-w-full justify-center gap-2 text-center'>
           <div className='w-96'>
             <Input.Search
+              allowClear
               maxLength={30}
               className='w-full'
               placeholder='搜索视频或 UP 主名称'
@@ -49,7 +50,6 @@ export default function SpaceMain() {
               onSearch={(txt) => {
                 setQuery((prev) => ({ ...prev, keyword: txt, page: 1 }))
               }}
-              allowClear
             />
           </div>
 

@@ -128,7 +128,7 @@ export default function VideoItem(props: { data: AppScope.VideoItem; showUpName?
       <article className={cls(props.className)}>
         <div className='relative'>
           <ImageView
-            className='mb-2 block h-36 w-full cursor-pointer rounded-md transition-all hover:opacity-75'
+            className='mb-2 block aspect-video w-full cursor-pointer rounded-md transition-all hover:opacity-75'
             src={coverImageURL}
             onClick={openVideo}
           />
