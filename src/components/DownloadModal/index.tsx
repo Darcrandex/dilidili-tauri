@@ -4,6 +4,7 @@
  * @author darcrand
  */
 
+import { ETaskStatus } from '@/const/enums'
 import { downloadBV } from '@/core'
 import { useRootDirPath } from '@/hooks/useRootDirPath'
 import { mediaService } from '@/services/media'
@@ -14,11 +15,20 @@ import { getSimilarQualityVideo } from '@/utils/get-similar-quality-video'
 import { useMutation, useQueries, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useSelections } from 'ahooks'
 import { App, Button, Checkbox, Flex, Modal, Select } from 'antd'
-import { first, sortBy } from 'lodash-es'
+import { clamp, first, sortBy } from 'lodash-es'
 import { ReactNode, useMemo, useState } from 'react'
 import { pickVideoInfo } from './utils'
 
-const MAX_TASK_COUNT = 100
+const MAX_TASK_COUNT = clamp(
+  process.env.VITE_MAX_TASK_COUNT ? Number.parseInt(process.env.VITE_MAX_TASK_COUNT) : 100,
+  1,
+  100,
+)
+const MAX_PROCESS_COUNT = clamp(
+  process.env.VITE_MAX_PROCESS_COUNT ? Number.parseInt(process.env.VITE_MAX_PROCESS_COUNT) : 10,
+  1,
+  10,
+)
 
 export type DownloadModalProps = {
   videoInfo: Bilibili.VideoInfoSchema
@@ -118,7 +128,36 @@ export default function DownloadModal(props: DownloadModalProps) {
           title: '提示',
           content: `(〜￣△￣)〜 任务数量超过 ${MAX_TASK_COUNT} 了，先清空一下吧`,
         })
-        return
+        throw new Error('超过总任务上限')
+      }
+
+      // 检查下载中的任务上限
+      const pendingCount = taskList
+        ? taskList.filter((v) => v.status === ETaskStatus.Downloading || v.status === ETaskStatus.Merging).length
+        : 0
+      if (pendingCount >= MAX_PROCESS_COUNT) {
+        modal.warning({
+          title: '提示',
+          content: `(〜￣△￣)〜 最多同时下载 ${MAX_PROCESS_COUNT} 个任务`,
+        })
+        throw new Error('超过最多进程上限')
+      }
+
+      // 检查是否为相同视频文件
+      const getTaskHash = (...args: any[]) => args.join('-')
+      const taskHash = getTaskHash([props.videoInfo.owner.mid, props.videoInfo.bvid, quality])
+      const hasSameTask = taskList?.some(
+        (v) =>
+          (v.status === ETaskStatus.Downloading || v.status === ETaskStatus.Merging) &&
+          getTaskHash(v.params.mid, v.params.bvid, v.params.quality) === taskHash,
+      )
+
+      if (hasSameTask) {
+        modal.warning({
+          title: '提示',
+          content: `(〜￣△￣)〜 相同的视频任务正在下载中`,
+        })
+        throw new Error('相同视频任务下载中')
       }
 
       const taskParamsArr = selectedPages.map((p) => {
