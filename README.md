@@ -2,6 +2,14 @@
 
 一个用于下载和管理 bilibili bv 视频的桌面应用
 
+## 预览
+
+![dilidili](./docs/01.jpg)
+![dilidili](./docs/02.jpg)
+![dilidili](./docs/03.jpg)
+![dilidili](./docs/04.jpg)
+![dilidili](./docs/05.jpg)
+
 ## deps
 
 - vitejs
