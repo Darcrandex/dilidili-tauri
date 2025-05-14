@@ -19,16 +19,8 @@ import { clamp, first, sortBy } from 'lodash-es'
 import { ReactNode, useMemo, useState } from 'react'
 import { pickVideoInfo } from './utils'
 
-const MAX_TASK_COUNT = clamp(
-  process.env.VITE_MAX_TASK_COUNT ? Number.parseInt(process.env.VITE_MAX_TASK_COUNT) : 100,
-  1,
-  100,
-)
-const MAX_PROCESS_COUNT = clamp(
-  process.env.VITE_MAX_PROCESS_COUNT ? Number.parseInt(process.env.VITE_MAX_PROCESS_COUNT) : 10,
-  1,
-  10,
-)
+const MAX_TASK_COUNT = clamp(Number.parseInt(import.meta.env.VITE_MAX_TASK_COUNT || '100'), 1, 100)
+const MAX_PROCESS_COUNT = clamp(Number.parseInt(import.meta.env.VITE_MAX_PROCESS_COUNT || '10'), 1, 10)
 
 export type DownloadModalProps = {
   videoInfo: Bilibili.VideoInfoSchema

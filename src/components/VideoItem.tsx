@@ -91,12 +91,11 @@ export default function VideoItem(props: { data: AppScope.VideoItem; showUpName?
 
   const removeMutation = useMutation({
     mutationFn: async () => {
-      const isValid = !bvDirPath || (await exists(bvDirPath))
-      if (!bvDirPath || !isValid) {
-        throw new Error('文件夹不存在')
-      }
-
       try {
+        const isValid = !bvDirPath || (await exists(bvDirPath))
+        if (!bvDirPath || !isValid) {
+          throw new Error('文件夹不存在')
+        }
         await remove(bvDirPath, { recursive: true })
       } catch (error) {
         console.log(error)

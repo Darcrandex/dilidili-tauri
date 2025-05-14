@@ -1,6 +1,6 @@
 /**
  * @name OwnerCard
- * @description
+ * @description 视频列表顶部当前视频列表的up主信息
  * @author darcrand
  */
 

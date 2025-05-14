@@ -1,3 +1,8 @@
+/**
+ * @name OwnerListItem
+ * @description 左侧-用户列表项
+ */
+
 import { ECommon } from '@/const/enums'
 import { useVideoQuery } from '@/stores/video-query'
 import { cls } from '@/utils/cls'
