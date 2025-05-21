@@ -52,12 +52,14 @@ export const mediaService = {
 
   async page(params?: { mid?: string; keyword?: string; pageNumber?: number; pageSize?: number }) {
     const filterFunction = (v: AppScope.VideoItem) => {
-      return (
-        (!params?.mid || params.mid === ECommon.AllMid || v.mid === params.mid) &&
-        (!params?.keyword ||
-          v.videoInfo.owner.name.includes(params.keyword) ||
-          v.videoInfo.title.includes(params.keyword))
-      )
+      const midFilter = !params?.mid || params?.mid === ECommon.AllMid || v.mid === params.mid
+
+      const ownerName = v.videoInfo.owner.name?.toLocaleLowerCase()
+      const title = v.videoInfo.title?.toLocaleLowerCase()
+      const keyword = params?.keyword?.toLocaleLowerCase() || ''
+      const keywordFilter = !params?.keyword || ownerName.includes(keyword) || title.includes(keyword)
+
+      return midFilter && keywordFilter
     }
 
     const filteredVideos = db.videos.filter(filterFunction)

@@ -45,6 +45,7 @@ export default function SpaceMain() {
               className='w-full'
               placeholder='搜索视频或 UP 主名称'
               enterButton
+              autoComplete='off'
               value={searchText}
               onChange={(e) => setSearchText(e.target.value)}
               onSearch={(txt) => {
