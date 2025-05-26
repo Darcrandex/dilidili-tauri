@@ -1,6 +1,7 @@
 import { modal } from '@/components/GlobalAntdMessage'
 import Nothing from '@/components/Nothing'
 import TaskItem from '@/components/TaskItem'
+import { ETaskStatus } from '@/const/enums'
 import { db } from '@/db'
 import { taskService } from '@/services/task'
 import { ClearOutlined } from '@ant-design/icons'
@@ -11,6 +12,16 @@ export default function TasksPage() {
   const taskList = useLiveQuery(() => db.tasks.orderBy('createdAt').reverse().toArray())
 
   const onRemoveAll = async () => {
+    const hasPending = taskList?.some((v) => v.status === ETaskStatus.Downloading || v.status === ETaskStatus.Merging)
+
+    if (hasPending) {
+      modal.info({
+        title: '提示',
+        content: '有正在下载的任务，请稍等',
+      })
+      return
+    }
+
     modal.confirm({
       title: '提示',
       content: '此操作不会删除已下载的文件，确定要清空下载任务吗?',
