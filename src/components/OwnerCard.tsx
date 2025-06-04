@@ -29,6 +29,15 @@ export default function OwnerCard() {
     queryFn: async () => userService.findByMid(query.mid || ''),
   })
 
+  const { data: ownerFullInfo } = useQuery({
+    enabled: isValid,
+    queryKey: ['owner', 'full-info', query.mid],
+    queryFn: async () => {
+      const res = await userService.getById(query.mid || '')
+      return res
+    },
+  })
+
   const openOwnerFolder = async () => {
     if (!ownerInfo || !rootDirPath || !query.mid) return
     const ownerPath = await join(rootDirPath, query.mid)
@@ -110,6 +119,7 @@ export default function OwnerCard() {
             </span>
           </p>
           <p className='mt-2 text-sm text-gray-500'>MID:{query.mid}</p>
+          <p className='text-sm text-gray-500'>{ownerFullInfo?.card.sign}</p>
         </div>
 
         <Dropdown
