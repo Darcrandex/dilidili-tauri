@@ -1,6 +1,6 @@
 /**
  * @name SpaceMain
- * @description
+ * @description 具体一个 UP 的主页面
  * @author darcrand
  */
 

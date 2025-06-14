@@ -83,10 +83,10 @@ export function removeInvalidChars(filename = '') {
   let illegalChars = /^/
   if (osType === 'windows') {
     // Windows 系统下非法字符
-    illegalChars = /[\\/*?:"<>|]/
+    illegalChars = /[\\/*?:"<>|]/g
   } else {
     // Unix/Linux 系统下非法字符
-    illegalChars = /[/]/
+    illegalChars = /[/]/g
   }
 
   return filename.replace(illegalChars, '')
