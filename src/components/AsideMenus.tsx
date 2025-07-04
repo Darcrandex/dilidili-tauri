@@ -27,7 +27,7 @@ export default function AsideMenus() {
               replace
               className={({ isActive }) =>
                 cls(
-                  'flex flex-col items-center justify-center px-6 py-4 text-2xl transition-all',
+                  'flex flex-col items-center justify-center p-4 text-lg transition-all',
                   isActive ? '!text-primary' : 'hover:!text-primary/50 !text-gray-500',
                 )
               }

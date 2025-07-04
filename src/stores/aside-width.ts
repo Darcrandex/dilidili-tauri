@@ -4,7 +4,7 @@ import { EStorageKey } from '@/const/enums'
 import { useAtom } from 'jotai'
 import { atomWithStorage } from 'jotai/utils'
 
-const stateAtom = atomWithStorage(EStorageKey.AisdeWidth, 128)
+const stateAtom = atomWithStorage(EStorageKey.AisdeWidth, 120)
 
 export function useAdideWidth() {
   return useAtom(stateAtom)
