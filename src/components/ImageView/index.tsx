@@ -60,6 +60,7 @@ export default function ImageView(props: UImageProps) {
         <img
           onLoad={() => setIsLoaded(true)}
           src={imageSrc}
+          loading='lazy'
           className={cls(
             'block h-full w-full',
             props.fit === 'contain' ? 'object-contain' : 'object-cover',

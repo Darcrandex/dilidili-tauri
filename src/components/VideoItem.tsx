@@ -1,6 +1,6 @@
 /**
  * @name VideoItem
- * @description
+ * @description 视频卡片项
  * @author darcrand
  */
 
@@ -9,6 +9,7 @@ import { mediaService } from '@/services/media'
 import { useVideoQuery } from '@/stores/video-query'
 import { cls } from '@/utils/cls'
 import { formatSeconds } from '@/utils/common'
+import { getThumbnailPath } from '@/utils/get-thumbnail-path'
 import { DeleteOutlined, FolderOpenOutlined, LinkOutlined, MoreOutlined } from '@ant-design/icons'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { convertFileSrc } from '@tauri-apps/api/core'
@@ -54,7 +55,11 @@ export default function VideoItem(props: { data: AppScope.VideoItem; showUpName?
     queryFn: async () => {
       if (!bvDirPath) return ''
       const coverImagePath = await join(bvDirPath, `${bvid}-cover.jpg`)
-      return coverImagePath ? convertFileSrc(coverImagePath) : ''
+      // 由于封面图片一般比较大
+      // 因此额外生成一个缩略图
+      // 加载时会尝试先加载省略图
+      const thumbnailPath = await getThumbnailPath(coverImagePath)
+      return convertFileSrc(thumbnailPath)
     },
   })
 

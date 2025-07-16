@@ -1,6 +1,10 @@
+mod commands;
+use commands::generate_thumbnail::generate_thumbnail;
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .invoke_handler(tauri::generate_handler![generate_thumbnail])
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_shell::init())
         .plugin(tauri_plugin_upload::init())
