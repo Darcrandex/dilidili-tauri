@@ -14,7 +14,7 @@ import { useVideoQuery } from '@/stores/video-query'
 import { ReloadOutlined } from '@ant-design/icons'
 import { useQuery } from '@tanstack/react-query'
 import { Button, Col, Input, Pagination, Row } from 'antd'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 const PAGE_SIZE = 24
 
@@ -24,6 +24,10 @@ export default function SpaceMain() {
   const [query, setQuery] = useVideoQuery()
   const isAll = !query.mid || query.mid === ECommon.AllMid
   const [searchText, setSearchText] = useState<string | undefined>(query.keyword)
+
+  useEffect(() => {
+    setSearchText(query.keyword)
+  }, [query])
 
   const { data, isPending, refetch } = useQuery({
     enabled: !!rootDirPath,
