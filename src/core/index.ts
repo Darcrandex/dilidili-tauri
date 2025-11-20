@@ -81,8 +81,7 @@ export async function downloadBV(params: AppScope.DownloadBVParams, rootDirPath:
     await taskService.update(taskId, { status: ETaskStatus.Merging })
     await mixingVideo(videoFilePath, audioFilePath, outputPath)
 
-    // todo
-    // 去重添加用户
+    // 保存up主信息
     await userService.create({
       mid: params.mid,
       name: params.videoInfo.owner.name,

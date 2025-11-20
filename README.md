@@ -130,9 +130,10 @@ pnpm tauri build --debug
 
 ## release
 
-修改 `package.json`和`src-tauri/tauri.conf.json`中的`version`字段; 创建并推送标签; 在`github-action`中执行脚本
+执行以下脚本, 用于创建 tag 和推送代码
 
 ```bash
-git tag 'app-v1.1.1'
-git push origin --tags
+release-version.sh
 ```
+
+在 github 仓库中运行 github action, 用于构建和发布应用; 在 release 页面可看到最新版本的草稿, 需手动发布

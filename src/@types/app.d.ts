@@ -32,6 +32,7 @@ declare namespace AppScope {
     mid: string
     name: string
     avatar: string
+    sign?: string
   }
 
   interface VideoItem extends VideoFolderItem {

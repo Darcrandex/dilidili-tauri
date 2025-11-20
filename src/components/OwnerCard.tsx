@@ -15,6 +15,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { join } from '@tauri-apps/api/path'
 import { exists, remove } from '@tauri-apps/plugin-fs'
 import { open as openShell } from '@tauri-apps/plugin-shell'
+import { useAsyncEffect } from 'ahooks'
 import { Button, Dropdown } from 'antd'
 import { message, modal } from './GlobalAntdMessage'
 
@@ -22,21 +23,46 @@ export default function OwnerCard() {
   const [query, setQuery] = useVideoQuery()
   const isValid = !!query.mid && query.mid !== ECommon.AllMid
   const rootDirPath = useRootDirPath()
+  const queryClient = useQueryClient()
 
+  // 数据同步的up主信息
   const { data: ownerInfo } = useQuery({
     enabled: isValid,
     queryKey: ['owner', query.mid],
     queryFn: async () => userService.findByMid(query.mid || ''),
   })
 
+  // B站服务器的最新up主信息
   const { data: ownerFullInfo } = useQuery({
     enabled: isValid,
     queryKey: ['owner', 'full-info', query.mid],
+
+    // 缓存时间 30 分钟
+    gcTime: 1000 * 60 * 30,
+    staleTime: 1000 * 60 * 30,
     queryFn: async () => {
       const res = await userService.getById(query.mid || '')
       return res
     },
   })
+
+  // 检测更新up主信息
+  useAsyncEffect(async () => {
+    if (!ownerFullInfo || !ownerInfo) return
+
+    const latest: AppScope.UserItem = {
+      id: ownerInfo.id,
+      mid: ownerInfo.mid,
+      name: ownerFullInfo.card.name,
+      avatar: ownerFullInfo.card.face,
+      sign: ownerFullInfo.card.sign,
+    }
+
+    if (JSON.stringify(latest) === JSON.stringify(ownerInfo)) return
+
+    await userService.update(latest)
+    queryClient.invalidateQueries({ queryKey: ['owner', query.mid] })
+  }, [ownerFullInfo, ownerInfo, queryClient])
 
   const openOwnerFolder = async () => {
     if (!ownerInfo || !rootDirPath || !query.mid) return
@@ -54,8 +80,6 @@ export default function OwnerCard() {
   const openOwnerSpace = async () => {
     await openShell(`https://space.bilibili.com/${query.mid}`)
   }
-
-  const queryClient = useQueryClient()
 
   const removeMutation = useMutation({
     mutationFn: async () => {
@@ -119,7 +143,7 @@ export default function OwnerCard() {
             </span>
           </p>
           <p className='mt-2 text-sm text-gray-500'>MID:{query.mid}</p>
-          <p className='text-sm text-gray-500'>{ownerFullInfo?.card.sign}</p>
+          <p className='text-sm text-gray-500'>{ownerInfo?.sign}</p>
         </div>
 
         <Dropdown

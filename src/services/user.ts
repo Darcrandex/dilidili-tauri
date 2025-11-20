@@ -44,6 +44,10 @@ export const userService = {
     return await db.users.where({ mid }).first()
   },
 
+  async update(item: AppScope.UserItem) {
+    await db.users.update(item.id, item)
+  },
+
   async remove(id: string) {
     await db.users.delete(id)
   },
