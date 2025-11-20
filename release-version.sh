@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# eg: ./release-version.sh major
+# eg: ./release-version.sh minor
+# eg: ./release-version.sh patch
+
 # 设置默认的升级类型为 patch
 UPGRADE_TYPE="patch"
 
