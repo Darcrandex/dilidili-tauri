@@ -37,7 +37,7 @@ export default function TasksPage() {
         <section className='space-y-4'>
           <div className='space-x-4'>
             <Button icon={<ClearOutlined />} hidden={!taskList || taskList?.length === 0} onClick={onRemoveAll}>
-              清空下载任务
+              清空下载任务({taskList?.length || 0})
             </Button>
           </div>
 
