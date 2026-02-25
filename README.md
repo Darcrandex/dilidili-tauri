@@ -128,6 +128,12 @@ pnpm tauri build --debug
 
 `tauri = { version = "2.2.4", features = ["protocol-asset",  "devtools"] }`
 
+### 打包报错
+
+在 macos 端打包时可能会在最后一步报错，原因大概是 macos 没有给 vscode 或者终端权限，导致无法打开应用；解决方法可查看以下文档
+
+- [macos 完全磁盘访问权限](https://www.solve.uk.com/post/how-to-grant-full-disk-access-in-macos-ventura)
+
 ## release
 
 执行以下脚本, 用于创建 tag 和推送代码
