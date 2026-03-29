@@ -81,7 +81,7 @@ export default function SearchPage() {
               />
             </Space.Compact>
 
-            {invalidBVID && <p className='text-center text-red-400 mt-4'>视频地址不对劲</p>}
+            {invalidBVID && <p className='mt-4 text-center text-red-400'>视频地址不对劲 (⊙ˍ⊙)</p>}
           </div>
 
           {!!videoInfo && (
