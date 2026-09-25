@@ -13,6 +13,7 @@ const navs = [
   { to: 'search', title: '搜索视频' },
   { to: 'task', title: '下载任务' },
   { to: 'space', title: '本地视频' },
+  { to: 'random', title: '随机视频' },
 ]
 
 export default function HomeLayout() {

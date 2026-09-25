@@ -2,7 +2,7 @@ import { ECommon } from '@/const/enums'
 import { http } from '@/core/request'
 import { db } from '@/db'
 import { uuid } from '@/utils/common'
-import { orderBy } from 'lodash-es'
+import { orderBy, sampleSize } from 'lodash-es'
 
 export const mediaService = {
   // 获取视频信息
@@ -72,6 +72,12 @@ export const mediaService = {
     const records = sorted.slice((pageNumber - 1) * pageSize, pageNumber * pageSize)
 
     return { records, total }
+  },
+
+  // 随机获取视频，默认 50 个
+  async randomMedias(count = 50) {
+    const allItems = await db.videos.toArray()
+    return sampleSize(allItems, count)
   },
 
   async remove(id: string) {

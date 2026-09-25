@@ -1,3 +1,4 @@
+import RandomPage from '@/app/home/random/page'
 import { lazy } from 'react'
 import { Navigate, type RouteObject } from 'react-router'
 
@@ -26,6 +27,7 @@ export const routes: RouteObject[] = [
           { path: 'search', element: <SearchPage /> },
           { path: 'task', element: <TaskPage /> },
           { path: 'space', element: <SpacePage /> },
+          { path: 'random', element: <RandomPage /> },
         ],
       },
 
