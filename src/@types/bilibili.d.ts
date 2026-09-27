@@ -264,4 +264,31 @@ declare namespace Bilibili {
     follower: number
     like_num: number
   }
+
+  // 申请二维码
+  export type QrcodeGenerateSchema = {
+    // 二维码内容 (账号中心的 h5 扫码确认页)
+    url: string
+    // 扫码登录秘钥, 恒为 32 字符, 有效期 180 秒
+    qrcode_key: string
+  }
+
+  // 轮询二维码状态
+  export type QrcodePollSchema = {
+    // 跨域下发登录凭证的链接, 未登录为空
+    url: string
+    // 用于后续刷新 cookie 的 refresh_token, 未登录为空
+    refresh_token: string
+    // 登录时间戳, 单位毫秒, 未登录为 0
+    timestamp: number
+    // 0: 登录成功, 86038: 二维码已失效, 86090: 已扫码未确认, 86101: 未扫码
+    code: number
+    message: string
+  }
+
+  // 轮询结果 + 从响应头和跨域链接里取到的登录凭证
+  export type QrcodeLoginSchema = QrcodePollSchema & {
+    // 登录成功后下发的 cookie, 主要是 SESSDATA
+    cookies: Record<string, string>
+  }
 }

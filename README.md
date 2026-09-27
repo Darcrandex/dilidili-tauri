@@ -29,7 +29,76 @@ pnpm dev
 
 ## bilibili-api
 
-感谢[bilibili-API-collect](https://github.com/SocialSisterYi/bilibili-API-collect/tree/master)开源项目
+> bilibili 的接口都是非公开接口, 随时可能变更, 这里只记录项目实际用到的部分
+
+感谢 [bilibili-API-collect](https://github.com/SocialSisterYi/bilibili-API-collect) 开源项目;
+该仓库已于 2026 年 1 月停止维护并归档, 需要查资料可以参考 [BACNext](https://github.com/BACNext/BACNext)
+
+### 扫码登录
+
+> 2026 年 8 月起 bilibili 改版了 web 端扫码登录: 申请二维码和轮询的接口没变, 但登录成功后不再把 `SESSDATA` 拼在返回的链接上, 而是改为通过 `Set-Cookie` 下发
+
+**1. 申请二维码**
+
+```bash
+GET https://passport.bilibili.com/x/passport-login/web/qrcode/generate?source=main-fe-header&go_url=<当前页面地址>
+```
+
+- `source` 是来源标识, 会回写到二维码链接的 `from` 参数
+- `go_url` 是当前页面地址
+
+```json
+{
+  "code": 0,
+  "message": "OK",
+  "data": {
+    "url": "https://account.bilibili.com/h5/account-h5/auth/scan-web?navhide=1&callback=close&qrcode_key=xxx&from=main-fe-header",
+    "qrcode_key": "xxx"
+  }
+}
+```
+
+把 `data.url` 渲染成二维码等待扫码即可; `data.qrcode_key` 是 32 位秘钥, 有效期 180 秒
+
+**2. 轮询扫码状态**
+
+```bash
+GET https://passport.bilibili.com/x/passport-login/web/qrcode/poll?qrcode_key=<秘钥>&source=main-fe-header
+```
+
+每 2 秒请求一次, 以 `data.code` 判断状态
+
+- `0` 登录成功
+- `86101` 未扫码
+- `86090` 已扫码未确认
+- `86038` 二维码已失效, 需要重新申请
+
+**3. 取登录凭证**
+
+`data.code` 为 `0` 时, `data.url` 是跨域票据链接
+
+```text
+https://passport.biligame.com/x/passport-login/web/crossDomain?ticket=xxx
+```
+
+真正的 `SESSDATA` / `bili_jct` / `DedeUserID` 是通过 `Set-Cookie` 下发的, 按顺序尝试这两个来源
+
+1. 轮询响应自身的 `Set-Cookie`
+2. 带浏览器 UA 手动跟随一次 `data.url`, 从它的 `Set-Cookie` 里取
+
+注意第 2 种不能自动重定向, 否则 302 之后的响应里就看不到 `Set-Cookie` 了
+
+**踩过的坑**
+
+- 浏览器的 `fetch` 读不到 `Set-Cookie`; 这里用的是 tauri 的 http 插件(底层是 reqwest), 响应头会原样透传给前端
+- `Headers` 会把多个 `Set-Cookie` 合并成以 `, ` 拼接的字符串, 而 `Expires` 里本身就带逗号, 拆分时只能按 "逗号 + `key=`" 的位置切
+- `SESSDATA` 存进 localStorage 时会被 jotai 的 `atomWithStorage` 做一次 `JSON.stringify`, 读的时候要还原, 否则发出去的是 `SESSDATA="xxx"`
+
+**相关代码**
+
+- `src/services/user.ts` 的 `qrcode` 申请二维码, `qrcodeCheck` 轮询并解析凭证
+- `src/core/request.ts` 的 `readResponseCookies` 解析 `Set-Cookie`, `fetchCookiesFromUrl` 跟随跨域链接
+- `src/components/LoginModal/LoginWithCode.tsx` 二维码渲染和状态轮询
 
 ## 项目构建
 

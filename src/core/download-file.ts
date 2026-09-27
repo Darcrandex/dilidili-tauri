@@ -1,6 +1,7 @@
 // 从 bilibili 服务器下载文件
 
-import { ECommon, EStorageKey } from '@/const/enums'
+import { ECommon } from '@/const/enums'
+import { readSession } from '@/core/request'
 import { getPathSpliter } from '@/utils/common'
 import { exists, mkdir, remove } from '@tauri-apps/plugin-fs'
 import { download as tauriDownload } from '@tauri-apps/plugin-upload'
@@ -12,12 +13,10 @@ export async function downloadFile(cfg: {
 }): Promise<void> {
   const headers = new Map()
 
-  const session = localStorage.getItem(EStorageKey.SessionKey) || import.meta.env.VITE_APP_SESSION
-
   // 3 个缺一不可
   headers.set('referer', ECommon.Referer)
   headers.set('User-Agent', window.navigator.userAgent)
-  headers.set('cookie', `SESSDATA=${session}`)
+  headers.set('cookie', `SESSDATA=${readSession()}`)
 
   // 检查是否有同名文件, 如果有则删除
   if (await exists(cfg.filePath)) {
