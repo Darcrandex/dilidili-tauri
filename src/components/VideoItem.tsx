@@ -18,7 +18,8 @@ import { exists, readDir, remove } from '@tauri-apps/plugin-fs'
 import { open as openShell } from '@tauri-apps/plugin-shell'
 import { App as AntdApp, Button, Dropdown } from 'antd'
 import dayjs from 'dayjs'
-import { useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
+import { useNavigate } from 'react-router'
 import { modal } from './GlobalAntdMessage'
 import ImageView from './ImageView'
 
@@ -27,6 +28,7 @@ export default function VideoItem(props: { data: AppScope.VideoItem; showUpName?
   const { message } = AntdApp.useApp()
   const [, setQuery] = useVideoQuery()
   const rootDirPath = useRootDirPath()
+  const navigate = useNavigate()
 
   const dateLabel = useMemo(() => {
     if (!videoInfo.pubdate) return ''
@@ -62,6 +64,12 @@ export default function VideoItem(props: { data: AppScope.VideoItem; showUpName?
       return convertFileSrc(thumbnailPath)
     },
   })
+
+  // 点击卡片的 up 主名称
+  const onClickUpName = useCallback(() => {
+    setQuery({ mid })
+    navigate('/home/space', { replace: true })
+  }, [mid, navigate, setQuery])
 
   const openVideo = async () => {
     if (!bvDirPath) {
@@ -156,7 +164,7 @@ export default function VideoItem(props: { data: AppScope.VideoItem; showUpName?
               <>
                 <span
                   className='hover:!text-primary inline-block cursor-pointer truncate !text-gray-400 transition-colors'
-                  onClick={() => setQuery({ mid })}
+                  onClick={onClickUpName}
                 >
                   {videoInfo.owner.name}
                 </span>
